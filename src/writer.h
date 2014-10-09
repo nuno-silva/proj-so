@@ -1,17 +1,11 @@
 #ifndef __WRITER_H__
 #define __WRITER_H__
 
-#define FILENAME "SO2014-%d.txt"
-
 #define random_range(min, max) (( rand() % ( max + 1 - min ) ) + min )
 
 #define CYCLE_COUNT 5120
 #define WRITE_COUNT 1024
 
-#define WRITER_STRING_LEN   10
-#define WRITER_STRING_COUNT 10
-
-extern const char writer_strings[ WRITER_STRING_COUNT ][ WRITER_STRING_LEN + 1 ];
 
 
 /**
