@@ -21,8 +21,6 @@ shared_stuff.o: shared_stuff.c shared_stuff.h
 clean:
 	rm -rf writer reader *.o *.txt
 
-zip: grupo-46.zip
-
-grupo-46.zip: writer reader
+zip:
 	rm -f grupo-46.zip
-	zip grupo-46.zip *.c *.h Makefile writer reader
+	zip grupo-46.zip *.c *.h Makefile
