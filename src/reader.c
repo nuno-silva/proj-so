@@ -3,84 +3,85 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "shared_constants.h"
+#include "shared_stuff.h"
 #include "reader.h"
 
-const int writer_f_flags = O_RDONLY;
+const static int reader_f_flags = O_RDONLY;
 
 
 int reader(int file_num){
-    char file_name[32];
-    int fd;
-    sprintf(file_name, FILENAME, file_num); // build file name
-    fd = open(file_name, writer_f_flags);
+    char file_name[64];
+    int fd, file_value;
+    sprintf(file_name, FILENAME, file_num); // place file_num in FILENAME
+    fd = open(file_name, reader_f_flags);
+    
+    if (fd == -1){ // error opening the file (does not exist?)
+        return FILE_IS_INVALID;
+    }
     
     // TEST PRINTFS BELOW
-    if (file_contents_are_valid(fd, 10)) {
+    if ( file_contents_are_valid(fd, WRITER_STRING_LEN, LINES_PER_FILE) == TRUE ){
         printf("VALID!\n");
-    }
-    else
+        file_value = FILE_IS_VALID;
+    }else{
         printf("INVALID!\n");
+        file_value =  FILE_IS_INVALID;
+    }
     
     close(fd);
+    return file_value;
 }
 
 
-int file_contents_are_valid(int fd, int line_length){
-    char *char_sequence;
+int file_contents_are_valid(int fd, int line_length, int line_count)
+{
     // number of bytes to read at a time from the file
-    int num_bytes_to_read = line_length*sizeof(char);
-    int i;
-    // allocate memory for the buffer ( used in read() )
-    char *first_line = (char*)malloc(num_bytes_to_read);
+    int line_size = line_length * sizeof(char);
     
-    if (read(fd, first_line, num_bytes_to_read) != num_bytes_to_read) {
+    char *first_line = (char*) malloc(line_size);
+    
+    // try to read and validate the first line of the file
+    if ( read(fd, first_line, line_size) != line_size ) {
         // the first line doesn't even have the correct number of characters
         free(first_line);
-        return 0;
+        return FALSE; // file is invalid
     }
-    
-    if (!valid_line(first_line, line_length)){
+    if ( !known_writer_string(first_line, line_size) ){
         free(first_line);
-        return 0; // character sequence is not identical, so it can't be valid
+        return FALSE; // file is invalid
     }
-        
-    char_sequence = (char*) malloc(sizeof(char) * line_length);
-    // strncpy(char_sequence, first_line, num_bytes_to_read);
     
+    // the first line is valid, so we can compare it with all other lines
+    char *line_buffer = (char*) malloc(line_size);
     
-    for (i=1; read(fd, char_sequence, num_bytes_to_read); i++){
-        if (strncmp(char_sequence, first_line, num_bytes_to_read)){
+    // compare all lines with the first line
+    int i;
+    for ( i = 1 ; read(fd, line_buffer, line_size) == line_size; i++ )
+    {
+        if ( strncmp(line_buffer, first_line, line_size) != 0 || i >= line_count){
             free(first_line);
-            free(char_sequence);
-            return 0; // file contents are invalid
+            free(line_buffer);
+            return FALSE; // file is invalid
         }
-            
     }
     
     free(first_line);
-    free(char_sequence);
+    free(line_buffer);
     
-    if (i != 1024)
-        return 0;   // nummber of lines is incorrect
+    if (i != line_count)
+        return FALSE;
     
-    return 1; // file contents are valid
+    return TRUE; // file is valid
 }
 
-int valid_line(char *first_line, int num_bytes){
-    if (!known_writer_string(first_line, num_bytes, WRITER_STRING_COUNT))
-        // the first line is not a known string
-        return 0;
-}
-
-int known_writer_string(char *first_line, int num_bytes, int num_strings){
+int known_writer_string(char *str, int str_size){
     int i;
     
-    for (i = 0; i < num_strings; i++){
-        if (strncmp(first_line, writer_strings[i], num_bytes) == 0){
-            return 1;
+    for ( i = 0; i < WRITER_STRING_COUNT; i++ ){
+        if ( strncmp(str, writer_strings[i], str_size) == 0 ){
+            return TRUE;
         }
     }
     
-    return 0;
+    return FALSE;
 }

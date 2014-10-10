@@ -1,4 +1,4 @@
-#include "shared_constants.h"
+#include "shared_stuff.h"
 
 char writer_strings [ WRITER_STRING_COUNT ][ WRITER_STRING_LEN + 1 ] = {
 	"aaaaaaaaa\n",
