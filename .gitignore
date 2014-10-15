@@ -27,3 +27,18 @@
 *.i*86
 *.x86_64
 *.hex
+
+# Project Specific Files
+*.txt
+
+# temporary save files
+*.swp
+
+# c9.io folder
+.c9/*
+
+*.zip
+
+# binaries
+src/reader
+src/writer
