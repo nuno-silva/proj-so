@@ -33,5 +33,5 @@ clean:
 
 zip:
 	rm -f grupo-46.zip
-	zip grupo-46.zip *.c *.h Makefile
+	zip grupo-46.zip *.c *.h Makefile $(EXECS)
 
