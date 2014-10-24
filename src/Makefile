@@ -31,7 +31,7 @@ shared_stuff.o: shared_stuff.c shared_stuff.h
 clean:
 	rm -rf $(EXECS) *.o *.txt
 
-zip:
+zip: $(EXECS)
 	rm -f grupo-46.zip
 	zip grupo-46.zip *.c *.h Makefile $(EXECS)
 
