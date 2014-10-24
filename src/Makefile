@@ -1,7 +1,13 @@
 CC = gcc
 CFLAGS = -g
+EXECS = writer_parent writer reader
 
-all: writer reader
+all: $(EXECS)
+
+writer_parent: writer_parent_main.o
+	$(CC) $^ -o $@
+
+writer_parent_main.o: writer_parent_main.c writer.h
 
 
 writer: writer_main.o writer.o shared_stuff.o
@@ -18,9 +24,11 @@ reader.o: reader.c reader.h shared_stuff.h
 
 shared_stuff.o: shared_stuff.c shared_stuff.h
 
+
 clean:
-	rm -rf writer reader *.o *.txt
+	rm -rf $(EXECS) *.o *.txt
 
 zip:
 	rm -f grupo-46.zip
 	zip grupo-46.zip *.c *.h Makefile
+

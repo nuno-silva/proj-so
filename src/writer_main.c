@@ -9,7 +9,7 @@ int main (int argc, char *argv[]){
 
     srand (time(NULL));
 
-    for ( i = 0; i < CYCLE_COUNT; i++ ){
+    for ( i = 0; i < CHILD_CYCLE_COUNT; i++ ){
     	file_num = RANDOM_RANGE(0, 4);
     	rand_str = get_writer_string( RANDOM_RANGE(0, WRITER_STRING_COUNT - 1) );
 		writer(file_num, rand_str, WRITER_STRING_LEN);

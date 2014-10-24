@@ -42,3 +42,4 @@
 # binaries
 src/reader
 src/writer
+src/writer_parent
