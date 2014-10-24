@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "writer.h"
 #include "shared_stuff.h"
@@ -15,9 +16,9 @@ void writer(int file_num, char *txt, int txt_len){
 	sprintf(file_name, FILENAME, file_num);	// place file_num in FILENAME
 	fd = open(file_name, writer_f_flags, writer_f_mode);
 	
-	txt_len *= sizeof(char);
+	txt_size = txt_len * sizeof(char);
 	for (i = 0; i < LINES_PER_FILE; i++){
-		write(fd, txt, txt_len);
+		write(fd, txt, txt_size);
 	}
 	
 	close(fd);

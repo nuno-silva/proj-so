@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "reader.h"
 #include "shared_stuff.h"
@@ -55,7 +56,7 @@ int file_contents_are_valid(int fd, int line_length, int line_count)
     int i;
     for ( i = 1 ; read(fd, line_buffer, line_size) == line_size; i++ )
     {
-        if ( strncmp(line_buffer, first_line, line_size) != 0 || i >= line_count){
+        if ( strncmp(line_buffer, first_line, line_size) != 0 || i >= line_count ){
             free(first_line);
             free(line_buffer);
             return FALSE; // file is invalid

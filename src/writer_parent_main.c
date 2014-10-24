@@ -3,6 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include "shared_stuff.h"
 
