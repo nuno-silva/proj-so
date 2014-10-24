@@ -1,10 +1,10 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
 
-#include "shared_stuff.h"
 #include "reader.h"
+#include "shared_stuff.h"
 
 const static int reader_f_flags = O_RDONLY;
 

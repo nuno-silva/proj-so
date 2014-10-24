@@ -1,54 +1,61 @@
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include <unistd.h>
 
-#include "writer.h"
+#include "shared_stuff.h"
 
 #define BUFFER_CHAR_COUNT 32
 
 
-int run_and_wait_for_children() {
+int run_and_wait_for_children(int cycle_count, int children_count) {
     int fork_result;
     int i;
-    for (i = 0; i < CHILDREN; i++)
+    char args[32];
+    for (i = 0; i < children_count; i++)
     {
         fork_result = fork();
         if (fork_result == -1) {
             return -1; // ERROR
         }
         else if (fork_result == 0) { // child
-            printf("child %d\n", i);
-            execl(WRITER_MAIN_PATH, WRITER_MAIN_PATH, NULL);
+            DBG_PRINTF("child %d\n", i);
+            sprintf(args, "%d", cycle_count/children_count);
+            execl(WRITER_MAIN_PATH, WRITER_MAIN_PATH, args, NULL);
         }
         else { // parent
-            printf("parent %d\n", i);
+            DBG_PRINTF("parent %d\n", i);
         }
     }
     
-    wait(); // wait for all childs to terminate
+    wait(NULL); // wait for all childs to terminate
     return 0;
 }
 
-int main (int argc, char *argv[]) {
+/* 
+ * The writer program receives the number of cycles as the first argument.
+ * Usage: writer [CYCLE_COUNT=5120]
+ */
+
+int main(int argc, char *argv[]) {
     int ret;
     struct timeval tvstart;     /* data de inicio */
     struct timeval tvend;       /* data de fim */
     struct timeval tvduration;  /* diferenca entre as duas datas */
     unsigned int duration_us;   /* diferenca entre as datas em microssegundos */
     
-    time_t curtime;     /* tempo em formato time_t para conversao de formatos */
-    char buffer[BUFFER_CHAR_COUNT];/* para escrever a data em formato legivel */
+    time_t curtime;             /* tempo em formato time_t para conversao de formatos */
+    char buffer[BUFFER_CHAR_COUNT]; /* para escrever a data em formato legivel */
     
-    gettimeofday(&tvstart, NULL); /* ler a data actual */
+    gettimeofday(&tvstart, NULL);   /* ler a data actual */
     /* converter e imprimir a data */
     curtime = tvstart.tv_sec;
     strftime(buffer, BUFFER_CHAR_COUNT, "%m-%d-%Y  %T.", localtime(&curtime));
     printf("inicio: %s%ld\n", buffer, tvstart.tv_usec);
     
-    ret = run_and_wait_for_children();
-    if(ret < 0) // error
+    ret = run_and_wait_for_children(CYCLE_COUNT, CHILDREN_COUNT);
+    if (ret < 0) // error
         return ret;
     
     gettimeofday(&tvend, NULL); /* ler a data actual */

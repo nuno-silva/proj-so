@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-
 #include "writer.h"
 #include "shared_stuff.h"
 
