@@ -30,7 +30,9 @@ int run_and_wait_for_children(int cycle_count, int children_count) {
         }
     }
     
-    wait(NULL); // wait for all childs to terminate
+    while(children_count--) { // wait for all children to terminate
+        wait(NULL); // wait for one child
+    }
     return 0;
 }
 
