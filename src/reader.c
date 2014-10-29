@@ -16,6 +16,8 @@ int reader(int file_num){
     sprintf(file_name, FILENAME, file_num); // place file_num in FILENAME
     fd = open(file_name, reader_f_flags);
 
+	flock(fd, LOCK_SH);
+
     if (fd == -1){ // error opening the file (does not exist?)
         return FILE_IS_INVALID;
     }
@@ -26,6 +28,8 @@ int reader(int file_num){
         file_value =  FILE_IS_INVALID;
     }
 
+	flock(fd, LOCK_UN);
+	
     close(fd);
     return file_value;
 }
