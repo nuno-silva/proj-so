@@ -1,6 +1,7 @@
 CC = gcc
 CFLAGS = -g
 EXECS = writer_parent writer reader
+ZIPNAME = grupo-46
 
 all: $(EXECS)
 
@@ -29,9 +30,9 @@ shared_stuff.o: shared_stuff.c shared_stuff.h
 
 
 clean:
-	rm -rf $(EXECS) *.o *.txt
+	rm -rf $(EXECS) *.o *.txt $(ZIPNAME).zip
 
 zip: $(EXECS)
-	rm -f grupo-46.zip
-	zip grupo-46.zip *.c *.h Makefile $(EXECS)
+	rm -f $(ZIPNAME).zip
+	zip $(ZIPNAME).zip *.c *.h Makefile $(EXECS)
 
