@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     /* converter e imprimir a data */
     curtime = tvstart.tv_sec;
     strftime(buffer, BUFFER_CHAR_COUNT, "%m-%d-%Y  %T.", localtime(&curtime));
-    printf("inicio: %s%ld\n", buffer, tvstart.tv_usec);
+    printf("inicio: %s%d\n", buffer, tvstart.tv_usec);
     
     ret = run_and_wait_for_children(CYCLE_COUNT, CHILDREN_COUNT);
     if (ret < 0) // error
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     /* converter e imprimir a data */
     curtime = tvend.tv_sec;
     strftime(buffer, BUFFER_CHAR_COUNT, "%m-%d-%Y  %T.", localtime(&curtime));
-    printf("fim: %s%ld\n", buffer, tvend.tv_usec);
+    printf("fim: %s%d\n", buffer, tvend.tv_usec);
     
     /* calcular e imprimir a diferenca de datas */
     tvduration.tv_sec = tvend.tv_sec - tvstart.tv_sec;
