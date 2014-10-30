@@ -5,7 +5,7 @@ ZIPNAME = grupo-46
 
 all: $(EXECS)
 
-debug: CFLAGS += -DDEBUG
+debug: CFLAGS += -DDEBUG -Wall -Wextra -pedantic
 debug: all
 
 writer_parent: writer_parent_main.o
