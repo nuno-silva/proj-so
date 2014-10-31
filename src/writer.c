@@ -18,7 +18,7 @@ void writer(int file_num, char *txt, int txt_len){
 
 	sprintf(file_name, FILENAME, file_num);	// place file_num in FILENAME
 	fd = open(file_name, writer_f_flags, writer_f_mode);
-	if(fd == -1) {
+	if (fd == -1) {
 		printf("open(%s) failed. errno=%d\n", file_name, errno);
 	}
 	

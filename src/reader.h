@@ -5,7 +5,7 @@
     #define FILE_IS_VALID    0
     #define FILE_IS_INVALID -1
     /*
-     * @brif Check the specified file for consistency.
+     * @brief Check the specified file for consistency.
      * @param file_num The file number
      * @retval FILE_IS_VALID or FILE_IS_INVALID
      */
