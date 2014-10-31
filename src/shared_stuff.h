@@ -21,7 +21,7 @@
     
     // used to print debug messages
     #ifdef DEBUG
-        #define DBG_PRINTF(format, ...) printf(format, __VA_ARGS__)
+        #define DBG_PRINTF(format, ...) printf("%s:%d: "format, __FILE__, __LINE__, __VA_ARGS__)
     #else
         #define DBG_PRINTF(format, ...) 
     #endif

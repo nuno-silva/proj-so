@@ -1,11 +1,11 @@
 CC = gcc
 CFLAGS = -g
 EXECS = writer_parent writer reader
-ZIPNAME = grupo-46
+ZIPNAME = ex3-g46
 
 all: $(EXECS)
 
-debug: CFLAGS += -DDEBUG -Wall -Wextra -pedantic
+debug: CFLAGS += -DDEBUG -Wall -Wextra
 debug: all
 
 writer_parent: writer_parent_main.o

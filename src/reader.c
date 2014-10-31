@@ -3,24 +3,27 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/file.h>
+#include <errno.h>
 
 #include "reader.h"
 #include "shared_stuff.h"
 
-const static int reader_f_flags = O_RDONLY;
+static const int reader_f_flags = O_RDONLY;
 
 
 int reader(int file_num){
     char file_name[64];
     int fd, file_value;
     sprintf(file_name, FILENAME, file_num); // place file_num in FILENAME
+    
     fd = open(file_name, reader_f_flags);
-
-	flock(fd, LOCK_SH);
-
-    if (fd == -1){ // error opening the file (does not exist?)
+    if (fd == -1 ) { // error opening the file (does not exist?)
+        printf("open(%s) failed. errno=%d\n", file_name, errno);
         return FILE_IS_INVALID;
     }
+    
+	flock(fd, LOCK_SH);
 
     if ( file_contents_are_valid(fd, WRITER_STRING_LEN, LINES_PER_FILE) == TRUE ){
         file_value = FILE_IS_VALID;
