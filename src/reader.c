@@ -16,13 +16,13 @@ int reader(int file_num){
     char file_name[64];
     int fd, file_value;
     sprintf(file_name, FILENAME, file_num); // place file_num in FILENAME
-    
+
     fd = open(file_name, reader_f_flags);
     if (fd == -1 ) { // error opening the file (does not exist?)
         printf("open(%s) failed. errno=%d\n", file_name, errno);
         return FILE_IS_INVALID;
     }
-    
+
 	flock(fd, LOCK_SH);
 
     if ( file_contents_are_valid(fd, WRITER_STRING_LEN, LINES_PER_FILE) == TRUE ){
@@ -32,7 +32,7 @@ int reader(int file_num){
     }
 
 	flock(fd, LOCK_UN);
-	
+
     close(fd);
     return file_value;
 }
@@ -63,7 +63,7 @@ int file_contents_are_valid(int fd, int line_length, int line_count)
     int i;
     for ( i = 1 ; read(fd, line_buffer, line_size) == line_size; i++ )
     {
-        if ( strncmp(line_buffer, first_line, line_size) != 0 || i >= line_count ){
+        if ( strncmp(line_buffer, first_line, line_length) != 0 || i >= line_count ){
             free(first_line);
             free(line_buffer);
             return FALSE; // file is invalid
