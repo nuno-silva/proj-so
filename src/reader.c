@@ -48,7 +48,7 @@ int file_contents_are_valid(int fd, int line_length, int line_count)
         free(first_line);
         return FALSE; // file is invalid
     }
-    if ( !known_writer_string(first_line, line_size) ){
+    if ( !known_writer_string(first_line, line_length) ){
         free(first_line);
         return FALSE; // file is invalid
     }
@@ -76,11 +76,11 @@ int file_contents_are_valid(int fd, int line_length, int line_count)
     return TRUE; // file is valid
 }
 
-int known_writer_string(char *str, int str_size){
+int known_writer_string(char *str, int str_len){
     int i;
 
     for ( i = 0; i < WRITER_STRING_COUNT; i++ ){
-        if ( strncmp(str, writer_strings[i], str_size) == 0 ){
+        if ( strncmp(str, writer_strings[i], str_len) == 0 ){
             return TRUE;
         }
     }
