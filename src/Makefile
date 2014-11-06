@@ -5,7 +5,7 @@ ZIPNAME = ex3-g46
 
 all: $(EXECS)
 
-debug: CFLAGS += -DDEBUG -g -Wextra -Wmissing-prototypes
+debug: CFLAGS += -DDEBUG -g -Wextra -Wunreachable-code
 debug: all
 
 
