@@ -1,18 +1,16 @@
 CC = gcc
-CFLAGS = -g
-EXECS = writer_parent writer reader
+CFLAGS = -Wall 
+EXECS = writer_parent writer reader_parent reader
 ZIPNAME = ex3-g46
 
 all: $(EXECS)
 
-debug: CFLAGS += -DDEBUG -Wall -Wextra
+debug: CFLAGS += -DDEBUG -g -Wextra -Wmissing-prototypes
 debug: all
 
+
 writer_parent: writer_parent_main.o
-	$(CC) $^ -o $@
-
-writer_parent_main.o: writer_parent_main.c shared_stuff.h
-
+writer_parent_main.o: writer_parent_main.c writer.h shared_stuff.h
 
 writer: writer_main.o writer.o shared_stuff.o
 
@@ -21,10 +19,15 @@ writer.o: writer.c writer.h shared_stuff.h
 
 
 
+reader_parent: reader_parent_main.o
+reader_parent_main.o: reader_parent_main.c reader.h shared_stuff.h
+
 reader: reader_main.o reader.o shared_stuff.o
 
 reader_main.o: reader_main.c reader.h shared_stuff.h
 reader.o: reader.c reader.h shared_stuff.h
+
+
 
 shared_stuff.o: shared_stuff.c shared_stuff.h
 
