@@ -1,9 +1,6 @@
 #ifndef __WRITER_H__
 	#define __WRITER_H__
 	
-	
-	#define CHILDREN_COUNT 10	/*	Constant useful only for writer function	*/
-	
 	/**
 	 * @brief Opens the file specified by file_num and writes to it.
 	 * 

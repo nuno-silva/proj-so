@@ -6,8 +6,8 @@
 #include <errno.h>
 
 #include "reader_parent_main.h"
-#include "reader.h"
 #include "shared_stuff.h"
+#include "reader_constants.h"
 
 int run_and_wait_for_children(int file_nums[], int children_count) {
     int fork_result;
@@ -37,8 +37,8 @@ int run_and_wait_for_children(int file_nums[], int children_count) {
 }
 
 int main(int argc, char* argv[]) {
-	int file_nums[CHILDREN_COUNT];
-	int i, j, temp;
+	int file_nums[READER_CHILDREN_COUNT];
+	int i;
     struct timeval time_now;
     
     // use the current micro seconds as a random seed
@@ -58,5 +58,5 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	return run_and_wait_for_children(file_nums, CHILDREN_COUNT);
+	return run_and_wait_for_children(file_nums, READER_CHILDREN_COUNT);
 }

@@ -2,9 +2,7 @@
 	#define __READER_H__
 	
 	
-	#define FILE_IS_VALID	 0
-	#define FILE_IS_INVALID	-1
-	#define CHILDREN_COUNT	 3		/*	Constant useful only for reader function	*/
+	
 	/**
 	 * @brief Check the specified file for consistency.
 	 * 

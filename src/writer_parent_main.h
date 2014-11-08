@@ -1,5 +1,6 @@
 #ifndef __WRITER_PARENT_MAIN_H__
 	#define __WRITER_PARENT_MAIN_H__
+	
 	/**
 	 * @brief Runs writer processes and waits for them to finish. The cycles
 	 * will be distributed by each child.

@@ -7,8 +7,8 @@
 #include <errno.h>
 
 #include "writer_parent_main.h"
-#include "writer.h"
 #include "shared_stuff.h"
+#include "writer_constants.h"
 
 #define BUFFER_CHAR_COUNT 32
 
@@ -44,7 +44,7 @@ int run_and_wait_for_children(int cycle_count, int children_count) {
 
 /* 
  * The writer program receives the number of cycles as the first argument.
- * Usage: writer [CYCLE_COUNT=5120]
+ * Usage: writer [TOTAL_WRITER_CYCLE_COUNT=5120]
  */
 
 int main() {
@@ -63,7 +63,7 @@ int main() {
     strftime(buffer, BUFFER_CHAR_COUNT, "%m-%d-%Y  %T.", localtime(&curtime));
     printf("inicio: %s%ld\n", buffer, (long int)tvstart.tv_usec);
     
-    ret = run_and_wait_for_children(CYCLE_COUNT, CHILDREN_COUNT);
+    ret = run_and_wait_for_children(TOTAL_WRITER_CYCLE_COUNT, CHILDREN_COUNT);
     if (ret < 0) // error
         return ret;
     

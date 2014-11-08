@@ -12,18 +12,18 @@ debug: all
 
 writer_parent: writer_parent_main.o
 	$(LD) $^ -o $@
-writer_parent_main.o: writer_parent_main.c writer_parent_main.h writer.h shared_stuff.h
+writer_parent_main.o: writer_parent_main.c writer_parent_main.h writer_constants.h shared_stuff.h
 
 writer: writer_main.o writer.o shared_stuff.o
 
-writer_main.o: writer_main.c writer.h shared_stuff.h
+writer_main.o: writer_main.c writer.h shared_stuff.h writer_constants.h
 writer.o: writer.c writer.h shared_stuff.h
 
 
 
 reader_parent: reader_parent_main.o
 	$(LD) $^ -o $@
-reader_parent_main.o: reader_parent_main.c reader_parent_main.h reader.h shared_stuff.h
+reader_parent_main.o: reader_parent_main.c reader_parent_main.h reader_constants.h shared_stuff.h
 
 reader: reader_main.o reader.o shared_stuff.o
 

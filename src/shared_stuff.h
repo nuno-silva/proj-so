@@ -6,7 +6,6 @@
 	// enables debug prints if defined; we define it in the makefile
 	//#define DEBUG
 	
-	#define CYCLE_COUNT 5120
 	#define WRITER_MAIN_PATH  "./writer"
 	
 	#define WRITER_STRING_LEN   10
@@ -24,8 +23,11 @@
 	    #define DBG_PRINTF(format, ...) 
 	#endif
 	
-	extern char writer_strings[ WRITER_STRING_COUNT ][ WRITER_STRING_LEN + 1 ];
-	
 	#define TRUE    1
 	#define FALSE   0
+	
+	extern char writer_strings[ WRITER_STRING_COUNT ][ WRITER_STRING_LEN + 1 ];
+	
+	
+	
 #endif
