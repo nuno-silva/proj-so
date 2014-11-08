@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-
+#include "writer_parent_main.h"
 #include "writer.h"
 #include "shared_stuff.h"
 

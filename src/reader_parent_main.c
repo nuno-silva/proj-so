@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 
+#include "reader_parent_main.h"
 #include "reader.h"
 #include "shared_stuff.h"
 
