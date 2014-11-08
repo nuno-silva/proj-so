@@ -22,5 +22,17 @@
 	 * @retval string placed in the index position of the global value writer_strings
 	 */
 	char *get_writer_string(int index);
+	
+	/**
+	 * @brief Runs CHILDREN_COUNT processes, each one reading a different file
+	 * CHILDREN_COUNT is a constant defined in writer.h
+	 * 
+	 * @param file_nums[] array of file mumbers to read
+	 * @param num_children number of child processes
+	 * 
+	 * @retval -1 on failure, 0 on success
+	 */
+	int run_and_wait_for_children(int cycle_count, int children_count);
+	/* [nuno] TODO: prototype above is useless */
 
 #endif //__WRITER_H__

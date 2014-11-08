@@ -38,18 +38,15 @@
 	int known_writer_string(char *str, int str_len);
 	
 	/**
-	 * @brief Runs NUM_CHILDREN processes, each one reading a different file
-	 * NUM_CHILDREN is a constant defined in reader.h
+	 * @brief Runs CHILDREN_COUNT processes, each one reading a different file
+	 * CHILDREN_COUNT is a constant defined in reader.h
 	 * 
 	 * @param file_nums[] array of file mumbers to read
 	 * @param num_children number of child processes
 	 * 
 	 * @retval -1 on failure, 0 on success
 	 */
-	int run_and_wait_for_children(int file_nums[], int num_children);
-	
-	/*	Prototype above is useless unless we move run_and_wait_for_children from 
-		read_parent_main.c elsewhere.
-	*/
+	int run_and_wait_for_children(int file_nums[], int children_count);
+	/* [nuno] TODO: prototype above is useless (someone removed a similar comment) */
 
 #endif
