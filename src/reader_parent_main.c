@@ -12,6 +12,8 @@
 int run_and_wait_for_children(int file_nums[], int children_count) {
     int fork_result;
     int i;
+    char arg[32];
+    int status, exit_value;
     
     for (i = 0; i < children_count; i++) {
     	fork_result = fork();
@@ -22,7 +24,8 @@ int run_and_wait_for_children(int file_nums[], int children_count) {
     	}
     	else if (fork_result == 0) {  // child
             DBG_PRINTF("child %d\n", i);
-    		execl("reader", "reader", file_nums[i], NULL);
+            sprintf(arg, "%d", file_nums[i]);
+    		execl("reader", "reader", arg, NULL);
     	}
     	else {  // parent
             DBG_PRINTF("parent %d\n", i);
@@ -31,12 +34,23 @@ int run_and_wait_for_children(int file_nums[], int children_count) {
     
     
     while (children_count--) { // wait for all children to terminate
-        wait(NULL); // wait for one child
+        if (wait(&status) == -1) { // wait for one child
+            printf("wait() failed. errno=%d", errno);
+        }
+        else {
+            if (WIFEXITED(status)) {
+                exit_value = (char) WEXITSTATUS(status);
+                printf("Child exited with value %d\n", exit_value);
+            }
+            else {
+                printf("Child exited abnormally\n");
+            }
+        }
     }
     return 0;
 }
 
-int main(int argc, char* argv[]) {
+int main() {
 	int file_nums[READER_CHILDREN_COUNT];
 	int i;
     struct timeval time_now;
@@ -46,16 +60,8 @@ int main(int argc, char* argv[]) {
     srand (time_now.tv_usec);
 	
 	// generate random file numbers
-	for (i = 0; i < CHILDREN_COUNT; i++) {
-		temp = RANDOM_RANGE(0,4);
-		for (j = 0; j < i; j++) {
-			if (file_nums[i] == temp) {
-				i--;
-			}
-			else{
-				file_nums[i] = temp;
-			}
-		}
+	for (i = 0; i < READER_CHILDREN_COUNT; i++) {
+		file_nums[i] = RANDOM_RANGE(0, 4);
 	}
 
 	return run_and_wait_for_children(file_nums, READER_CHILDREN_COUNT);

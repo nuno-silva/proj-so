@@ -16,7 +16,7 @@
 int run_and_wait_for_children(int cycle_count, int children_count) {
     int fork_result;
     int i;
-    char args[32];
+    char arg[32];
     for (i = 0; i < children_count; i++)
     {
         fork_result = fork();
@@ -26,8 +26,8 @@ int run_and_wait_for_children(int cycle_count, int children_count) {
         }
         else if (fork_result == 0) { // child
             DBG_PRINTF("child %d\n", i);
-            sprintf(args, "%d", cycle_count/children_count);
-            if( execl(WRITER_MAIN_PATH, WRITER_MAIN_PATH, args, NULL) == -1 ) {
+            sprintf(arg, "%d", cycle_count/children_count);
+            if( execl(WRITER_MAIN_PATH, WRITER_MAIN_PATH, arg, NULL) == -1 ) {
                 printf("execl(%s) failed. errno=%d", WRITER_MAIN_PATH, errno);
             }
         }
