@@ -2,11 +2,11 @@ LD = gcc
 CC = gcc
 CFLAGS = -Wall 
 EXECS = writer_parent writer reader_parent reader
-ZIPNAME = ex3-g46
+ZIPNAME = ex4-g46-v1
 
 all: $(EXECS)
 
-debug: CFLAGS += -DDEBUG -g -Wextra -Wunreachable-code
+debug: CFLAGS += -DDEBUG -g -Wextra -Wunreachable-code -Wbad-function-cast
 debug: all
 
 
