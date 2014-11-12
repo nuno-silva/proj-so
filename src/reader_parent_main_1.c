@@ -51,7 +51,7 @@ int run_and_wait_for_children(int file_nums[], int children_count) {
 }
 
 int main() {
-	int file_nums[READER_CHILDREN_COUNT];
+	int file_nums[READER_1_CHILDREN_COUNT];
 	int i;
     struct timeval time_now;
     
@@ -60,9 +60,9 @@ int main() {
     srand (time_now.tv_usec);
 	
 	// generate random file numbers
-	for (i = 0; i < READER_CHILDREN_COUNT; i++) {
+	for (i = 0; i < READER_1_CHILDREN_COUNT; i++) {
 		file_nums[i] = RANDOM_RANGE(0, 4);
 	}
 
-	return run_and_wait_for_children(file_nums, READER_CHILDREN_COUNT);
+	return run_and_wait_for_children(file_nums, READER_1_CHILDREN_COUNT);
 }

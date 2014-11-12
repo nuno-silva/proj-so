@@ -1,8 +1,9 @@
 LD = gcc
 CC = gcc
 CFLAGS = -Wall 
+LDFLAGS = 
 EXECS = writer_parent writer reader
-EXECS+= reader_parent_1
+EXECS+= reader_parent_1 reader_parent_2
 ZIPNAME = ex4-g46
 
 all: $(EXECS)
@@ -12,7 +13,7 @@ debug: all
 
 
 writer_parent: writer_parent_main.o
-	$(LD) $^ -o $@
+	$(LD) $(LDFLAGS) $^ -o $@
 writer_parent_main.o: writer_parent_main.c writer_parent_main.h writer_constants.h shared_stuff.h
 
 writer: writer_main.o writer.o shared_stuff.o
@@ -23,8 +24,18 @@ writer.o: writer.c writer.h shared_stuff.h
 
 
 reader_parent_1: reader_parent_main_1.o
-	$(LD) $^ -o $@
+	$(LD) $(LDFLAGS) $^ -o $@
 reader_parent_main_1.o: reader_parent_main_1.c reader_parent_main_1.h reader_constants.h shared_stuff.h
+
+
+
+reader_parent_2: LDFLAGS+=-pthread
+reader_parent_2: reader_parent_main_2.o reader.o shared_stuff.o
+	$(LD) $(LDFLAGS) $^ -o $@
+
+reader_parent_main_2.o: reader_parent_main_2.c reader_parent_main_2.h
+reader_parent_main_2.o: reader.h reader_constants.h shared_stuff.h
+
 
 reader: reader_main.o reader.o shared_stuff.o
 
