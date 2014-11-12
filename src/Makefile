@@ -1,8 +1,9 @@
 LD = gcc
 CC = gcc
 CFLAGS = -Wall 
-EXECS = writer_parent writer reader_parent reader
-ZIPNAME = ex4-g46-v1
+EXECS = writer_parent writer reader
+EXECS+= reader_parent_1
+ZIPNAME = ex4-g46
 
 all: $(EXECS)
 
@@ -21,9 +22,9 @@ writer.o: writer.c writer.h shared_stuff.h
 
 
 
-reader_parent: reader_parent_main.o
+reader_parent_1: reader_parent_main_1.o
 	$(LD) $^ -o $@
-reader_parent_main.o: reader_parent_main.c reader_parent_main.h reader_constants.h shared_stuff.h
+reader_parent_main_1.o: reader_parent_main_1.c reader_parent_main_1.h reader_constants.h shared_stuff.h
 
 reader: reader_main.o reader.o shared_stuff.o
 

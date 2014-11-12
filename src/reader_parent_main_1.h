@@ -1,5 +1,5 @@
-#ifndef __READER_PARENT_MAIN_H__
-	#define __READER_PARENT_MAIN_H__
+#ifndef __READER_PARENT_MAIN_1_H__
+	#define __READER_PARENT_MAIN_1_H__
 	
 	/**
 	 * @brief Runs reader processes, each one reading a different file, and
