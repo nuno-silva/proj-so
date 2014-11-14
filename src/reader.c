@@ -19,7 +19,7 @@ int reader(int file_num){
     sprintf(file_name, FILENAME, file_num); // place file_num in FILENAME
 
     fd = open(file_name, reader_f_flags);
-    if (fd == -1 ) { // error opening the file (does not exist?)
+    if (fd == -1) { // error opening the file (does not exist?)
         printf("open(%s) failed. errno=%d\n", file_name, errno);
         return FILE_IS_INVALID;
     }
@@ -28,7 +28,7 @@ int reader(int file_num){
 
     if ( file_contents_are_valid(fd, WRITER_STRING_LEN, LINES_PER_FILE) == TRUE ){
         file_value = FILE_IS_VALID;
-    }else{
+    } else{
         file_value =  FILE_IS_INVALID;
     }
 

@@ -2,7 +2,6 @@
 	#define __READER_H__
 	
 	
-	
 	/**
 	 * @brief Check the specified file for consistency.
 	 * 

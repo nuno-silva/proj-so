@@ -1,6 +1,6 @@
 LD = gcc
 CC = gcc
-CFLAGS = -Wall 
+CFLAGS = -Wall
 LDFLAGS = 
 EXECS = writer_parent writer reader
 EXECS+= reader_parent_1 reader_parent_2
@@ -16,6 +16,7 @@ writer_parent: writer_parent_main.o
 	$(LD) $(LDFLAGS) $^ -o $@
 writer_parent_main.o: writer_parent_main.c writer_parent_main.h writer_constants.h shared_stuff.h
 
+
 writer: writer_main.o writer.o shared_stuff.o
 
 writer_main.o: writer_main.c writer.h shared_stuff.h writer_constants.h
@@ -25,6 +26,7 @@ writer.o: writer.c writer.h shared_stuff.h
 
 reader_parent_1: reader_parent_main_1.o
 	$(LD) $(LDFLAGS) $^ -o $@
+
 reader_parent_main_1.o: reader_parent_main_1.c reader_parent_main_1.h reader_constants.h shared_stuff.h
 
 
