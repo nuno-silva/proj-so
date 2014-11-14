@@ -12,7 +12,7 @@ void *reader_thread(void *arg) {
     int file_num = *((int*) arg);
     int *ret = (int*) malloc( sizeof(int) );
     
-    if (ret == NULL)
+    if (ret == NULL || arg == NULL)
         exit(-1);
     
     *ret = reader(file_num);

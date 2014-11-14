@@ -12,17 +12,29 @@
 	int reader(int file_num);
 	
 	/**
+	 * @brief Check the specified and limited file for consistency.
+	 * 
+	 * @param file_num The file number
+	 * @param first_line Line to start reading
+	 * @param last_line Line where reading ends
+	 * 
+	 * @retval FILE_IS_VALID or FILE_IS_INVALID
+	 */
+	int reader_ranged(int file_num, int first_line, int last_line);
+	
+	/**
 	 * @brief Checks wether the file is valid.
 	 * A file is considered valid if it repeats one of the known writer strings
 	 * line_count times.
 	 * 
 	 * @param fd The file descriptor of the file to check
 	 * @param line_length Expected length of each line, in characters
-	 * @param line_count Expected number of lines in the file
+	 * @param first_line First line to start checking 
+	 * @param last_line Last line where checking ends
 	 * 
 	 * @retval TRUE if the file is valid; FALSE otherwise
 	 */
-	int file_contents_are_valid(int fd, int line_length, int line_count);
+	int file_contents_are_valid(int fd, int line_length, int first_line, int last_line);
 	
 	/**
 	 * @brief looks for str in writer_strings

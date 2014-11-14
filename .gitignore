@@ -31,6 +31,9 @@
 # Project Specific Files
 *.txt
 
+# Finals folder (for compressed work or binaries)
+finals
+
 # temporary save files
 *.swp
 
@@ -45,4 +48,4 @@ src/writer
 src/writer_parent
 src/reader_parent_1
 src/reader_parent_2
-
+src/reader_parent_3
