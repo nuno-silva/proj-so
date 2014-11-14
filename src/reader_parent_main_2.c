@@ -29,14 +29,14 @@ int run_and_wait_for_threads(int *file_nums, int thread_count) {
     
     thread_results = (int**) malloc( sizeof(int*) * thread_count );
     if (thread_results == NULL) {
-        DBG_PRINTF("Could not allocate memory for 'thread_results'\n");
+        printf("Could not allocate memory for 'thread_results'\n");
         return -1;
     }
     
     threads = (pthread_t*) malloc( sizeof(pthread_t) * thread_count );
     if (threads == NULL) {
         free(thread_results);
-        DBG_PRINTF("Could not allocate memory for 'threads'\n");
+        printf("Could not allocate memory for 'threads'\n");
         return -1;
     }
     
@@ -44,7 +44,9 @@ int run_and_wait_for_threads(int *file_nums, int thread_count) {
     for (i = 0; i < thread_count; i++) {
         error = pthread_create( threads+i, NULL, reader_thread, file_nums+i );
         if (error != 0) {
-            printf("Could not create thread %d\n", i);
+            printf("Error %d: Could not create thread %d\n", error, i);
+            free(thread_results);
+            free(threads);
             return -1;
         }
     }
@@ -53,7 +55,9 @@ int run_and_wait_for_threads(int *file_nums, int thread_count) {
     for (i = 0; i < thread_count; i++) {
         error = pthread_join(threads[i], (void**) &(thread_results[i]));
         if (error != 0) {
-            printf("Thread %d could not be suspended\n", i);
+            printf("Error %d: Thread %d could not be suspended\n", error, i);
+            free(thread_results);
+			free(threads);
             return -1;
         }
         else {
@@ -63,6 +67,8 @@ int run_and_wait_for_threads(int *file_nums, int thread_count) {
             }
             else {
                 printf("Thread %d returned nothing\n", i);
+                free(thread_results);
+				free(threads);
                 return -1;
             }
         }
