@@ -58,14 +58,14 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	if ( read(fd, first_line_buf, line_size) != line_size ) {
 		// the first line doesn't even have the correct number of characters
 		free(first_line_buf);
-		DBG_PRINT("invalid file detected here\n");
+		DBG_PRINT("invalid file detected here (file is too small)\n");
 		return FALSE; // file is invalid
 	}
 
 	DBG_PRINTF("fd=%d, first_line_buf='%s'\n",fd,first_line_buf);
 	if ( !known_writer_string(first_line_buf, line_length) ){
 		free(first_line_buf);
-		DBG_PRINT("invalid file detected here\n");
+		DBG_PRINT("invalid file detected here (unknown line)\n");
 		return FALSE; // file is invalid
 	}
 	
@@ -74,12 +74,12 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	
 	lseek( fd, first_line * line_size, SEEK_SET );
 	
-	// compare all lines with the first line of the file, except the last one
+	// compare all lines with the first line of the file
 	int i;
 	for ( i = 0 ; i < line_count && read(fd, line_buffer, line_size) == line_size; i++ )
 	{
 		if ( strncmp(line_buffer, first_line_buf, line_length) != 0 ) {
-			DBG_PRINTF( "invalid file detected here; fd=%d, first_line=%d, i=%d\n",
+			DBG_PRINTF( "invalid file detected here (unconsistent line); fd=%d, first_line=%d, i=%d\n",
 			            fd, first_line, i );
 			free(first_line_buf);
 			free(line_buffer);
@@ -89,14 +89,14 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	
 	// did we read all expected lines?
 	if( i < line_count  ) {
-		DBG_PRINT("invalid file detected here\n");
+		DBG_PRINT("invalid file detected here (shorter than expected)\n");
 		return FALSE;
 	}
 	
 	// is the file longer than expected?
 	if ( (first_line + i) >= LINES_PER_FILE ) { // we are in the last line of the file
 		if( read(fd, line_buffer, 1) > 0 ) { // file is longer than expected
-			DBG_PRINT("invalid file detected here\n");
+			DBG_PRINT("invalid file detected here (longer than expected)\n");
 			return FALSE;
 		}
 	}
@@ -115,7 +115,6 @@ int known_writer_string(char *str, int str_len){
 			return TRUE;
 		}
 	}
-	DBG_PRINT("invalid file detected here\n");
 	
 	return FALSE;
 }
