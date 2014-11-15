@@ -74,26 +74,35 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	
 	lseek( fd, first_line * line_size, SEEK_SET );
 	
-	// compare all lines with the first line
+	// compare all lines with the first line of the file, except the last one
 	int i;
-	for ( i = 0 ; read(fd, line_buffer, line_size) == line_size; i++ )
+	for ( i = 0 ; i < line_count && read(fd, line_buffer, line_size) == line_size; i++ )
 	{
-		if ( strncmp(line_buffer, first_line_buf, line_length) != 0 || i >= line_count ){
+		if ( strncmp(line_buffer, first_line_buf, line_length) != 0 ) {
+			DBG_PRINTF( "invalid file detected here; fd=%d, first_line=%d, i=%d\n",
+			            fd, first_line, i );
 			free(first_line_buf);
 			free(line_buffer);
-			DBG_PRINTF("fd=%d, invalid file detected here; first_line=%d, i=%d\nline_buff='%s'; first_line_buf='%s'\n",
-			            fd,first_line, i, line_buffer, first_line_buf);
 			return FALSE; // file is invalid
+		}
+	}
+	
+	// did we read all expected lines?
+	if( i < line_count  ) {
+		DBG_PRINT("invalid file detected here\n");
+		return FALSE;
+	}
+	
+	// is the file longer than expected?
+	if ( (first_line + i) >= LINES_PER_FILE ) { // we are in the last line of the file
+		if( read(fd, line_buffer, 1) > 0 ) { // file is longer than expected
+			DBG_PRINT("invalid file detected here\n");
+			return FALSE;
 		}
 	}
 	
 	free(first_line_buf);
 	free(line_buffer);
-	
-	if (i != line_count) {
-		DBG_PRINT("invalid file detected here\n");
-		return FALSE;
-	}
 	
 	return TRUE; // file is valid
 }
