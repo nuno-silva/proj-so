@@ -14,18 +14,18 @@ int main(int argc, char *argv[]){
     int cycle_count;
     struct timeval time_now;
 
-    // use the current micro seconds as a random seed
+    /* use the current micro seconds as a random seed */
     gettimeofday(&time_now, NULL);
     srand (time_now.tv_usec);
 
-    // read cycle_count from argv
+    /* read cycle_count from argv */
     if (argc > 1) {
         sscanf(argv[1], "%d", &cycle_count);
 	}
     else {
         cycle_count = TOTAL_WRITER_CYCLE_COUNT;
     }
-	
+
     DBG_PRINTF("writer cycle_count: %d\n", cycle_count);
 
     for ( i = 0; i < cycle_count; i++ ) {

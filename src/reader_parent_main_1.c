@@ -14,27 +14,27 @@ int run_and_wait_for_children(int file_nums[], int children_count) {
     int i;
     char arg[32];
     int status, exit_value;
-    
+
     for (i = 0; i < children_count; i++) {
     	fork_result = fork();
-    	
-    	if (fork_result == -1) {  // ERROR
+
+    	if (fork_result == -1) {  /* ERROR */
             printf("fork() failed. errno=%d", errno);
     		return -1;
     	}
-    	else if (fork_result == 0) {  // child
+    	else if (fork_result == 0) {  /* child */
             DBG_PRINTF("child %d\n", i);
             sprintf(arg, "%d", file_nums[i]);
     		execl("reader", "reader", arg, NULL);
     	}
-    	else {  // parent
+    	else {  /* parent */
             DBG_PRINTF("parent %d\n", i);
     	}
     }
-    
-    
-    while (children_count--) { // wait for all children to terminate
-        if (wait(&status) == -1) { // wait for one child
+
+
+    while (children_count--) { /* wait for all children to terminate */
+        if (wait(&status) == -1) { /* wait for one child */
             printf("wait() failed. errno=%d", errno);
         }
         else {
@@ -54,12 +54,12 @@ int main() {
 	int file_nums[READER_1_CHILDREN_COUNT];
 	int i;
     struct timeval time_now;
-    
-    // use the current micro seconds as a random seed
+
+    /* use the current micro seconds as a random seed */
     gettimeofday(&time_now, NULL);
     srand (time_now.tv_usec);
-	
-	// generate random file numbers
+
+	/* generate random file numbers */
 	for (i = 0; i < READER_1_CHILDREN_COUNT; i++) {
 		file_nums[i] = RANDOM_RANGE(0, 4);
 	}

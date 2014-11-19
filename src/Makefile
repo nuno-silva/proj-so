@@ -1,7 +1,7 @@
 LD = gcc
 CC = gcc
-CFLAGS = -Wall
-LDFLAGS = 
+CFLAGS = -Wall -ansi
+LDFLAGS =
 EXECS = writer_parent writer reader
 EXECS+= reader_parent_1 reader_parent_2 reader_parent_3
 ZIPNAME = ex4-g46
@@ -64,4 +64,3 @@ clean:
 zip: $(EXECS)
 	rm -f $(ZIPNAME).zip
 	zip $(ZIPNAME).zip *.c *.h Makefile $(EXECS)
-

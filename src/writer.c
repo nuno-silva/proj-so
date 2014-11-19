@@ -16,21 +16,21 @@ void writer(int file_num, char *txt, int txt_len){
 	char file_name[64];
 	int fd, i, txt_size;
 
-	sprintf(file_name, FILENAME, file_num);	// place file_num in FILENAME
+	sprintf(file_name, FILENAME, file_num);	/* place file_num in FILENAME */
 	fd = open(file_name, writer_f_flags, writer_f_mode);
 	if (fd == -1) {
 		printf("open(%s) failed. errno=%d\n", file_name, errno);
 	}
-	
+
 	flock(fd, LOCK_EX);
-	
+
 	txt_size = txt_len * sizeof(char);
 	for (i = 0; i < LINES_PER_FILE; i++){
 		write(fd, txt, txt_size);
 	}
-	
+
 	flock(fd, LOCK_UN);
-	
+
 	close(fd);
 }
 
