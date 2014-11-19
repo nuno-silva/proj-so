@@ -22,16 +22,16 @@ int run_and_wait_for_children(int cycle_count, int children_count) {
         fork_result = fork();
         if (fork_result == -1) {
             printf("fork() failed. errno=%d", errno);
-            return -1; // ERROR
+            return -1; /* ERROR */
         }
-        else if (fork_result == 0) { // child
+        else if (fork_result == 0) { /* child */
             DBG_PRINTF("child %d\n", i);
             sprintf(arg, "%d", cycle_count/children_count);
             if( execl(WRITER_MAIN_PATH, WRITER_MAIN_PATH, arg, NULL) == -1 ) {
                 printf("execl(%s) failed. errno=%d", WRITER_MAIN_PATH, errno);
             }
         }
-        else { // parent
+        else { /* parent */
             DBG_PRINTF("parent %d\n", i);
         }
     }
@@ -64,7 +64,7 @@ int main() {
     printf("inicio: %s%ld\n", buffer, (long int)tvstart.tv_usec);
 
     ret = run_and_wait_for_children(TOTAL_WRITER_CYCLE_COUNT, CHILDREN_COUNT);
-    if (ret < 0) // error
+    if (ret < 0) /* error */
         return ret;
 
     gettimeofday(&tvend, NULL); /* ler a data actual */
