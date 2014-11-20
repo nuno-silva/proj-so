@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/file.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 
 #include "writer.h"
