@@ -2,9 +2,9 @@ LD = gcc
 CC = gcc
 CFLAGS = -Wall -ansi
 LDFLAGS =
-EXECS = writer_parent writer reader
-EXECS+= reader_parent_1 reader_parent_2 reader_parent_3
-ZIPNAME = ex4-g46
+EXECS = writer reader
+EXECS+= writer_parent reader_parent
+ZIPNAME = ex5-g46
 
 all: $(EXECS)
 
@@ -33,28 +33,12 @@ reader_main.o: reader_main.c reader.h shared_stuff.h
 reader.o: reader.c reader.h shared_stuff.h
 
 
-
-reader_parent_1: reader_parent_main_1.o
+reader_parent: LDFLAGS+=-pthread
+reader_parent: reader_parent_main.o reader.o shared_stuff.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
-reader_parent_main_1.o: reader_parent_main_1.c reader_parent_main_1.h
-reader_parent_main_1.o: reader_constants.h shared_stuff.h
-
-
-reader_parent_2: LDFLAGS+=-pthread
-reader_parent_2: reader_parent_main_2.o reader.o shared_stuff.o
-	$(LD) $(LDFLAGS) $^ -o $@
-
-reader_parent_main_2.o: reader_parent_main_2.c reader_parent_main_2.h
-reader_parent_main_2.o: reader.h reader_constants.h shared_stuff.h
-
-
-reader_parent_3: LDFLAGS+=-pthread
-reader_parent_3: reader_parent_main_3.o reader.o shared_stuff.o
-	$(LD) $(LDFLAGS) $^ -o $@
-
-reader_parent_main_3.o: reader_parent_main_3.c reader_parent_main_3.h
-reader_parent_main_3.o: reader.h reader_constants.h shared_stuff.h
+reader_parent_main.o: reader_parent_main.c reader_parent_main.h
+reader_parent_main.o: reader.h reader_constants.h shared_stuff.h
 
 
 
