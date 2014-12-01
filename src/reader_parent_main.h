@@ -13,15 +13,15 @@
 	* @brief Runs reader threads, each one reading a different file, and waits for
 	* them to finish.
 	*
-	* @param file_num File number
 	* @param thread_count Number of threads to run
 	*
 	* @retval -1 on failure, 0 on success
 	*/
-	int run_and_wait_for_threads(int file_num, int thread_count);
+	int run_and_wait_for_threads(int thread_count);
 
 	typedef struct {
-		int file_num, first_line, last_line;
+		int first_line, last_line;
+		char *filename;
 	} thread_info_t;
 
 #endif

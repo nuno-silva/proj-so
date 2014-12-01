@@ -13,7 +13,8 @@
 	#define WRITER_STRING_COUNT 10
 	#define LINES_PER_FILE      1024
 
-	#define FILENAME "SO2014-%d.txt"
+	#define FILENAME		"SO2014-%d.txt"
+	#define FILENAME_LEN	20
 
 	#define RANDOM_RANGE(MIN, MAX) (( rand() % ( MAX + 1 - MIN ) ) + MIN )
 

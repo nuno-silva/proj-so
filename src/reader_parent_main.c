@@ -2,15 +2,20 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "reader.h"
 #include "reader_constants.h"
 #include "reader_parent_main.h"
 #include "shared_stuff.h"
 
+char *Buffer_filename;
+
 void *reader_thread(void *arg) {
 	thread_info_t thread_info = *((thread_info_t*) arg);
 	int *ret = (int*) malloc( sizeof(int) );
+	int file_num;
 
 	if (ret == NULL || arg == NULL)
 		exit(-1);
@@ -18,12 +23,14 @@ void *reader_thread(void *arg) {
 	DBG_PRINTF("thread will read from %d to %d\n",
 	thread_info.first_line, thread_info.last_line);
 
-	*ret = reader_ranged(thread_info.file_num, thread_info.first_line, thread_info.last_line);
+	file_num = atoi(&thread_info.filename[7]);
+
+	*ret = reader_ranged(file_num, thread_info.first_line, thread_info.last_line);
 
 	pthread_exit((void*) ret);
 }
 
-int run_and_wait_for_threads(int file_num, int thread_count) {
+int run_and_wait_for_threads(int thread_count) {
 	int i;
 	int error;
 	int portion_size, remaining;
@@ -61,9 +68,9 @@ int run_and_wait_for_threads(int file_num, int thread_count) {
 	/* start threads */
 	for (i = 0; i < thread_count; i++) {
 		/* populate thread_info */
-		thread_info[i].file_num		= file_num;
+		strcpy(thread_info[i].filename, Buffer_filename);
 		thread_info[i].first_line	= i * portion_size;
-		thread_info[i].last_line	= thread_info[i].first_line + portion_size -1;
+		thread_info[i].last_line	= thread_info[i].first_line + portion_size - 1;
 
 		if (i == last_thread_i) {
 			thread_info[i].last_line += remaining;
@@ -111,20 +118,22 @@ int run_and_wait_for_threads(int file_num, int thread_count) {
 }
 
 int main(void) {
-	int file_num;
+	int filename_size = sizeof(char)*FILENAME_LEN;
 	struct timeval time_now;
 
 	/* use the current micro seconds as a random seed */
 	gettimeofday(&time_now, NULL);
 	srand(time_now.tv_usec);
 
+	/* Initializing buffer */
+	Buffer_filename = (char*) malloc(filename_size);
+
 	while (TRUE){
-		/* generate random file number */
-		file_num = RANDOM_RANGE(0, 4);
+		read(0, Buffer_filename, filename_size);
 
-		DBG_PRINTF("file_num = %d\n", file_num);
+		DBG_PRINTF("filename = %s\n", Buffer_filename);
 
-		run_and_wait_for_threads(file_num, READER_THREAD_COUNT);
+		run_and_wait_for_threads(READER_THREAD_COUNT);
 	}
 
 	return 0;
