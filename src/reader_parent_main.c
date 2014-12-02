@@ -67,10 +67,14 @@ int run_and_wait_for_threads(int thread_count) {
 
 	/* start threads */
 	for (i = 0; i < thread_count; i++) {
+		DBG_PRINT("Populating thread_info.\n");
+		thread_info[i].filename = malloc(sizeof(char)*strlen(Buffer_filename));
+
 		/* populate thread_info */
 		strcpy(thread_info[i].filename, Buffer_filename);
 		thread_info[i].first_line	= i * portion_size;
 		thread_info[i].last_line	= thread_info[i].first_line + portion_size - 1;
+		DBG_PRINTF("index = %d", i);
 
 		if (i == last_thread_i) {
 			thread_info[i].last_line += remaining;
@@ -130,6 +134,9 @@ int main(void) {
 
 	while (TRUE){
 		read(0, Buffer_filename, filename_size);
+
+		/* Removing trailing '\n' */
+		Buffer_filename[strlen(Buffer_filename) - 1] = '\0';
 
 		DBG_PRINTF("filename = %s\n", Buffer_filename);
 

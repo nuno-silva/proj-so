@@ -88,7 +88,7 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	}
 
 	/* did we read all expected lines? */
-	if( i < line_count  ) {
+	if ( i < line_count  ) {
 		DBG_PRINT("invalid file detected here (shorter than expected)\n");
 		return FALSE;
 	}
