@@ -14,18 +14,16 @@
 
 static const int reader_f_flags = O_RDONLY;
 
-int reader(int file_num) {
-	return reader_ranged(file_num, 0, LINES_PER_FILE - 1);
+int reader(char *filename){
+	return reader_ranged(filename, 0, LINES_PER_FILE - 1);
 }
 
-int reader_ranged(int file_num, int first_line, int last_line) {
-	char file_name[64];
+int reader_ranged(char *filename, int first_line, int last_line) {
 	int fd, file_value;
-	sprintf(file_name, FILENAME, file_num); /* place file_num in FILENAME */
 
-	fd = open(file_name, reader_f_flags);
+	fd = open(filename, reader_f_flags);
 	if (fd == -1) { /* error opening the file (does not exist?) */
-		printf("open(%s) failed. errno=%d\n", file_name, errno);
+		printf("open(%s) failed. errno=%d\n", filename, errno);
 		return FILE_IS_INVALID;
 	}
 
@@ -62,7 +60,8 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 		return FALSE; /* file is invalid */
 	}
 
-	DBG_PRINTF("fd=%d, first_line_buf='%s'\n",fd,first_line_buf);
+
+	DBG_PRINTF("fd=%d, first_line_buf='%s'\n", fd, first_line_buf);
 	if ( !known_writer_string(first_line_buf, line_length) ){
 		free(first_line_buf);
 		DBG_PRINT("invalid file detected here (unknown line)\n");

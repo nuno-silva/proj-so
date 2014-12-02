@@ -15,17 +15,14 @@ char *Buffer_filename;
 void *reader_thread(void *arg) {
 	thread_info_t thread_info = *((thread_info_t*) arg);
 	int *ret = (int*) malloc( sizeof(int) );
-	int file_num;
 
 	if (ret == NULL || arg == NULL)
 		exit(-1);
 
-	DBG_PRINTF("thread will read from %d to %d\n",
+	DBG_PRINTF("Thread will read from %d to %d\n",
 	thread_info.first_line, thread_info.last_line);
 
-	file_num = atoi(&thread_info.filename[7]);
-
-	*ret = reader_ranged(file_num, thread_info.first_line, thread_info.last_line);
+	*ret = reader_ranged(Buffer_filename, thread_info.first_line, thread_info.last_line);
 
 	pthread_exit((void*) ret);
 }
@@ -67,14 +64,13 @@ int run_and_wait_for_threads(int thread_count) {
 
 	/* start threads */
 	for (i = 0; i < thread_count; i++) {
-		DBG_PRINT("Populating thread_info.\n");
+		DBG_PRINTF("Populating info for thread %d.\n", i);
 		thread_info[i].filename = malloc(sizeof(char)*strlen(Buffer_filename));
 
 		/* populate thread_info */
 		strcpy(thread_info[i].filename, Buffer_filename);
 		thread_info[i].first_line	= i * portion_size;
 		thread_info[i].last_line	= thread_info[i].first_line + portion_size - 1;
-		DBG_PRINTF("index = %d", i);
 
 		if (i == last_thread_i) {
 			thread_info[i].last_line += remaining;

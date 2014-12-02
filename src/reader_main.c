@@ -7,6 +7,7 @@
 
 int main(int argc, char* argv[]) {
 	int file_num;
+	char filename[FILENAME_LEN];
 	struct timeval time_now;
 
 	if (argc < 2) {
@@ -19,5 +20,7 @@ int main(int argc, char* argv[]) {
 		/* File number provided, use that one */
 		file_num = atoi(argv[1]);
 	}
-	return reader(file_num);
+	sprintf(filename, FILENAME, file_num);
+
+	return reader(filename);
 }
