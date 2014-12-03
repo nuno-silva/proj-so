@@ -1,5 +1,12 @@
-LD = gcc
-CC = gcc
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+	LD = gcc-4.9
+	CC = gcc-4.9
+else
+	LD = gcc
+	CC = gcc
+endif
 CFLAGS = -Wall -ansi
 LDFLAGS =
 EXECS  = reader_parallel
