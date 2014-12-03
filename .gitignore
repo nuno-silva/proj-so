@@ -43,8 +43,6 @@ finals
 *.zip
 
 # binaries
-src/reader
-src/writer
-src/writer_parent
-src/reader_parent
+src/writer_parallel
+src/reader_parallel
 

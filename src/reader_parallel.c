@@ -7,7 +7,7 @@
 
 #include "reader.h"
 #include "reader_constants.h"
-#include "reader_parent_main.h"
+#include "reader_parallel.h"
 #include "shared_stuff.h"
 
 char *Buffer_filename;

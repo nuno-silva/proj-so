@@ -1,5 +1,5 @@
-#ifndef __WRITER_PARENT_MAIN_H__
-	#define __WRITER_PARENT_MAIN_H__
+#ifndef __WRITER_PARALLEL_H__
+	#define __WRITER_PARALLEL_H__
 	
 	/**
 	 * @brief Runs writer processes and waits for them to finish. The cycles
@@ -12,4 +12,4 @@
 	 */
 	int run_and_wait_for_children(int cycle_count, int children_count);
 
-#endif
+#endif /* __WRITER_PARALLEL_H__ */

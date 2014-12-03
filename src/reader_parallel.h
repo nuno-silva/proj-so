@@ -1,5 +1,5 @@
-#ifndef __READER_PARENT_MAIN_H__
-	#define __READER_PARENT_MAIN_H__
+#ifndef __READER_PARALLEL_H__
+	#define __READER_PARALLEL_H__
 
 	/**
 	* @brief Creates a thread prepared with reader credentials. Said thread then brings
@@ -24,4 +24,4 @@
 		char *filename;
 	} thread_info_t;
 
-#endif
+#endif /* __READER_PARALLEL_H__ */
