@@ -46,8 +46,5 @@ finals
 src/reader
 src/writer
 src/writer_parent
-src/reader_parent_1
-src/reader_parent_2
-src/reader_parent_3
 src/reader_parent
 
