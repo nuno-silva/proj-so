@@ -50,6 +50,7 @@ void *writer_thread(void *p) {
     int error_line_counter = 0; /* if it's even, don't introduce an error, else, do */
     int str_length = 0; /* size of the string to write */
     int str_index = 0;
+    char* wrong_str;
     
 	while(1) { /* TODO terminate loop on signal*/
         
@@ -59,10 +60,12 @@ void *writer_thread(void *p) {
         if (error_line_counter%2) {
             /* if the number is odd, introduce an error in that line */
             str_length = strlen(rand_str);
+            wrong_str = malloc( (strlen + 1)*sizeof(char) );
+            strcpy(wrong_str, rand_str);
             str_index = RANDOM_RANGE(0, str_length - 1);
             /* change a character's offset on a random position to a random 
             offset between 1 and 100 */
-            rand_str[str_index] = rand_str[str_index] + 
+            wrong_str[str_index] = wrong[str_index] + 
                                         RANDOM_RANGE(MIN_OFFSET, MAX_OFFSET);
         }
         
