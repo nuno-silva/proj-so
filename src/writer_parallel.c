@@ -13,8 +13,9 @@
 #define BUFFER_CHAR_COUNT 32
 
 static int use_locks = TRUE;
+static int enable_writing_errors = FALSE;
 
-/** Handles SIGUSER1 signal, which inverts Lock usage */
+/** Handles SIGUSR1 signal, which inverts Lock usage */
 void sigusr1_handler(int number) {
     use_locks = !use_locks;
     
@@ -26,7 +27,22 @@ void sigusr1_handler(int number) {
     }
 }
 
-void *writer_thread() {
+/* Handles SIGUSR2, which inverts error writing */
+void sigusr2_handler(int sig_num) {
+    /* sig_num is the number of the calling signal */
+    
+    enable_writing_errors = !enable_writing_errors;
+    
+    if (enable_writing_errors) {
+        DBG_PRINT("Writing with errors.");
+    }
+    
+    else {
+        DBG_PRINT("Writing without errors.");
+    }
+}
+
+void *writer_thread(void *p) {
     int file_num;
     char *rand_str;
     
@@ -84,7 +100,10 @@ int main() {
 
     time_t curtime;             /* tempo em formato time_t para conversao de formatos */
     char buffer[BUFFER_CHAR_COUNT]; /* para escrever a data em formato legivel */
-    struct sigaction new_action;
+    
+    /* signals struct declarations */
+    struct sigaction new_action; 
+    struct sigaction sigusr2_action;
     
     /* register SIGNAL handlers */
     
@@ -94,6 +113,13 @@ int main() {
     sigaddset(&new_action.sa_mask, SIGUSR1);
     new_action.sa_flags = 0;
     sigaction( SIGUSR1, &new_action, NULL);
+    
+    /* register SIGUSR2 handler */
+    sigusr2_action.sa_handler = sigusr2_handler; /* */
+    sigemptyset(&sigusr2_action.sa_mask); /* clear the set of blocked signals */
+    sigaddset(&sigusr2_action.sa_mask, SIGUSR2); /* add SIGUSR2 to blocked sigs */
+    sigusr2_action.sa_flags = 0; /* don't modify signals behaviour */
+    sigaction(SIGUSR2, &sigusr2_action, NULL); /* bind the action to SIGUSR2 */
     
     
     /* print current time */
