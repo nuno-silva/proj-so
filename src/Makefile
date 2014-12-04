@@ -22,6 +22,7 @@ debug: all
 shared_stuff.o: shared_stuff.c shared_stuff.h
 
 
+writer_parallel: LDFLAGS+=-pthread
 writer_parallel: writer_parallel.o writer.o shared_stuff.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
