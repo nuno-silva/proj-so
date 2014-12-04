@@ -34,11 +34,11 @@ void sigusr2_handler(int sig_num) {
     enable_writing_errors = !enable_writing_errors;
     
     if (enable_writing_errors) {
-        DBG_PRINT("Writing with errors.");
+        DBG_PRINT("Writing with errors.\n");
     }
     
     else {
-        DBG_PRINT("Writing without errors.");
+        DBG_PRINT("Writing without errors.\n");
     }
 }
 
@@ -105,7 +105,6 @@ int main() {
     
     /* signals struct declarations */
     struct sigaction new_action; 
-    struct sigaction sigusr2_action;
     
     /* register SIGNAL handlers */
     
@@ -117,11 +116,11 @@ int main() {
     sigaction( SIGUSR1, &new_action, NULL);
     
     /* register SIGUSR2 handler */
-    sigusr2_action.sa_handler = sigusr2_handler; /* */
-    sigemptyset(&sigusr2_action.sa_mask); /* clear the set of blocked signals */
-    sigaddset(&sigusr2_action.sa_mask, SIGUSR2); /* add SIGUSR2 to blocked sigs */
-    sigusr2_action.sa_flags = 0; /* don't modify signals behaviour */
-    sigaction(SIGUSR2, &sigusr2_action, NULL); /* bind the action to SIGUSR2 */
+    new_action.sa_handler = sigusr2_handler; /* */
+    sigemptyset(&new_action.sa_mask); /* clear the set of blocked signals */
+    sigaddset(&new_action.sa_mask, SIGUSR2); /* add SIGUSR2 to blocked sigs */
+    new_action.sa_flags = 0; /* don't modify signals behaviour */
+    sigaction(SIGUSR2, &new_action, NULL); /* bind the action to SIGUSR2 */
     
     
     /* print current time */
