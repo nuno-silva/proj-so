@@ -18,6 +18,7 @@ static int enable_writing_errors = FALSE;
 
 /** Handles SIGUSR1 signal, which inverts Lock usage */
 void sigusr1_handler(int number) {
+    (void) number; /* suppress unused variable warning */
     use_locks = !use_locks;
     
     if(use_locks) { 
@@ -30,6 +31,7 @@ void sigusr1_handler(int number) {
 
 /* Handles SIGUSR2, which inverts error writing */
 void sigusr2_handler(int sig_num) {
+    (void) sig_num; /* suppress unused variable warning */
     /* sig_num is the number of the calling signal */
     enable_writing_errors = !enable_writing_errors;
     
@@ -43,6 +45,7 @@ void sigusr2_handler(int sig_num) {
 }
 
 void *writer_thread(void *p) {
+    (void) p; /* suppress unused variable warning */
     int file_num;
     char *rand_str;
     
