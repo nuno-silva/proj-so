@@ -121,11 +121,6 @@ int run_and_wait_for_threads(int thread_count) {
 }
 
 int main(void) {
-	static sem_t* sem;
-	int sem_init_result;
-
-	// initialize the semaphore
-	sem_init_result = sem_init(sem, SEM_PSHARED_VAL, SEM_INIT_VAL);
 
 	int filename_size = sizeof(char)*FILENAME_LEN;
 	struct timeval time_now;
