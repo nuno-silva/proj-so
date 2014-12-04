@@ -3,6 +3,7 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <pthread.h>
+#include <signal.h> /* needs -D_POSIX_C_SOURCE if using -ansi */
 
 #include "writer_parallel.h"
 #include "shared_stuff.h"
@@ -11,6 +12,19 @@
 
 #define BUFFER_CHAR_COUNT 32
 
+static int use_locks = TRUE;
+
+/** Handles SIGUSER1 signal, which inverts Lock usage */
+void sigusr1_handler(int number) {
+    use_locks = !use_locks;
+    
+    if(use_locks) { 
+        DBG_PRINT("Using locks.\n");
+    }
+    else {
+        DBG_PRINT("Not using locks.\n");
+    }
+}
 
 void *writer_thread() {
     int file_num;
@@ -20,7 +34,7 @@ void *writer_thread() {
 
         file_num = RANDOM_RANGE(0, 4);
         rand_str = get_writer_string( RANDOM_RANGE(0, WRITER_STRING_COUNT - 1) );
-        writer(file_num, rand_str, WRITER_STRING_LEN);
+        writer(file_num, rand_str, WRITER_STRING_LEN, use_locks);
 
 	}
 }
@@ -70,6 +84,19 @@ int main() {
 
     time_t curtime;             /* tempo em formato time_t para conversao de formatos */
     char buffer[BUFFER_CHAR_COUNT]; /* para escrever a data em formato legivel */
+    struct sigaction new_action;
+    
+    /* register SIGNAL handlers */
+    
+    /* register SIGUSR1 handler */
+    new_action.sa_handler = sigusr1_handler;
+    sigemptyset (&new_action.sa_mask);
+    sigaddset(&new_action.sa_mask, SIGUSR1);
+    new_action.sa_flags = 0;
+    sigaction( SIGUSR1, &new_action, NULL);
+    
+    
+    /* print current time */
 
     gettimeofday(&tvstart, NULL);   /* ler a data actual */
     /* converter e imprimir a data */
@@ -77,9 +104,11 @@ int main() {
     strftime(buffer, BUFFER_CHAR_COUNT, "%m-%d-%Y  %T.", localtime(&curtime));
     printf("inicio: %s%ld\n", buffer, (long int)tvstart.tv_usec);
 
+
     ret = run_and_wait_for_threads(THREAD_COUNT);
     if (ret < 0) /* error */
         return ret;
+
 
     gettimeofday(&tvend, NULL); /* ler a data actual */
 

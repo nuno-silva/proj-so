@@ -8,6 +8,7 @@ else
 	CC = gcc
 endif
 CFLAGS = -Wall -ansi
+CFLAGS+= -D_POSIX_C_SOURCE
 LDFLAGS =
 EXECS  = reader_parallel
 EXECS += writer_parallel

@@ -12,4 +12,6 @@
 
 	void *writer_thread();
 	
+	void sigusr1_handler(int number);
+	
 #endif /* __WRITER_PARALLEL_H__ */

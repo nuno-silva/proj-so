@@ -7,8 +7,9 @@
 	 * @param file_num the number of the file
 	 * @param txt pointer to the string to write
 	 * @param txt_len number of characters in txt to write
+	 * @param use_locks  use exclusive locks while writing to the file
 	 */
-	void writer(int file_num, char *txt, int txt_len);
+	void writer(int file_num, char *txt, int txt_len, int use_locks);
 
 
 	/**
