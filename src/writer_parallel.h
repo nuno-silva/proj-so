@@ -10,7 +10,7 @@
 	 */
 	int run_and_wait_for_threads( int thread_count );
 
-	void *writer_thread();
+	void *writer_thread(void *p);
 	
 	void sigusr1_handler(int number);
 	void sigusr2_handler(int sig_num);
