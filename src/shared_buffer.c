@@ -1,6 +1,7 @@
 #include "shared_buffer.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 void shared_buffer_insert( shared_buffer_t *s, item_t i ) {
 	
@@ -44,7 +45,7 @@ item_t shared_buffer_consume( shared_buffer_t *s ) {
 		exit(-1);
 	}
 	
-	item = buffer[s->index--];
+	item = s->buffer[s->index--];
 	
 	
 	if (pthread_mutex_unlock(&(s->mutex)) !=0 ) {
@@ -65,17 +66,17 @@ item_t shared_buffer_consume( shared_buffer_t *s ) {
 int shared_buffer_init( shared_buffer_t *s, int pshared_val, size_t size ) {
 	
 	/* initially all slots are empty */
-	if (sem_init(&(s->empty), psharedval, size) == -1) {
+	if (sem_init(&(s->empty), pshared_val, size) == -1) {
 		/* error occured */
-		// TODO: treat error
+		/* TODO: treat error */
 		printf("Error initliazing the semaphore\n");
 		exit(-1);
 	}
 	
 	/* intially there are no occupied slots */
-	if (sem_init(&(s->occupied), psharedval, 0) == -1) {
+	if (sem_init(&(s->occupied), pshared_val, 0) == -1) {
 		/* error occured */
-		// TODO: treat error
+		/* TODO: treat error */
 		printf("Error initliazing the semaphore\n");
 		exit(-1);
 	}
