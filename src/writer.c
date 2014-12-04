@@ -13,8 +13,7 @@
 static const int writer_f_flags = O_WRONLY | O_CREAT;
 static const int writer_f_mode  = S_IRUSR  | S_IWUSR | S_IROTH;
 
-void writer(int file_num, char *txt, int txt_len, int use_locks, 
-int enable_writing_errors) {
+void writer(int file_num, char *txt, int txt_len, int use_locks) {
 	char file_name[64];
 	int fd, i, txt_size;
 

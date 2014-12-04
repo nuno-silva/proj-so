@@ -49,8 +49,7 @@ void *writer_thread(void *p) {
 
         file_num = RANDOM_RANGE(0, 4);
         rand_str = get_writer_string( RANDOM_RANGE(0, WRITER_STRING_COUNT - 1) );
-        writer(file_num, rand_str, WRITER_STRING_LEN, use_locks,
-        enable_writing_errors);
+        writer(file_num, rand_str, WRITER_STRING_LEN, use_locks);
 
 	}
 }
