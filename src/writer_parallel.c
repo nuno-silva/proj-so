@@ -30,7 +30,6 @@ void sigusr1_handler(int number) {
 /* Handles SIGUSR2, which inverts error writing */
 void sigusr2_handler(int sig_num) {
     /* sig_num is the number of the calling signal */
-    
     enable_writing_errors = !enable_writing_errors;
     
     if (enable_writing_errors) {
@@ -50,7 +49,8 @@ void *writer_thread(void *p) {
 
         file_num = RANDOM_RANGE(0, 4);
         rand_str = get_writer_string( RANDOM_RANGE(0, WRITER_STRING_COUNT - 1) );
-        writer(file_num, rand_str, WRITER_STRING_LEN, use_locks);
+        writer(file_num, rand_str, WRITER_STRING_LEN, use_locks,
+        enable_writing_errors);
 
 	}
 }
