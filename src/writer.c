@@ -4,6 +4,9 @@
 #include <sys/file.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <stdlib.h>
+#include <string.h>
+
 
 
 #include "writer.h"
@@ -13,9 +16,15 @@
 static const int writer_f_flags = O_WRONLY | O_CREAT;
 static const int writer_f_mode  = S_IRUSR  | S_IWUSR | S_IROTH;
 
-void writer(int file_num, char *txt, int txt_len, int use_locks) {
+void writer(int file_num, char *txt, int txt_len, int use_locks, int enable_writing_errors) {
 	char file_name[64];
 	int fd, i, txt_size;
+
+	/* wrong/correct writer vars below */
+	int line_counter = 0; /* if it's even, don't introduce an error, else, do */
+    int str_index = 0;
+    char* wrong_str = NULL;
+    char* str_to_write = NULL; /* points to the string that will actually be written */
 
 	sprintf(file_name, FILENAME, file_num);	/* place file_num in FILENAME */
 	fd = open(file_name, writer_f_flags, writer_f_mode);
@@ -28,13 +37,37 @@ void writer(int file_num, char *txt, int txt_len, int use_locks) {
 	}
 
 	txt_size = txt_len * sizeof(char);
+
+	if (enable_writing_errors) {
+		wrong_str = (char*) malloc( txt_size + sizeof(char) );
+	}
+
 	for (i = 0; i < LINES_PER_FILE; i++){
-		write(fd, txt, txt_size);
+		str_to_write = txt; /* by default, write the correct string */
+
+		if(enable_writing_errors) {
+			if (line_counter % 2) {
+	            /* line is odd - introduce an error in that line */
+	            strcpy(wrong_str, txt);
+	            str_index = RANDOM_RANGE(0, txt_len - 1);
+	            /* change a character's offset on a random position to a random offset */
+	            wrong_str[str_index] = wrong_str[str_index] +
+	                                    	RANDOM_RANGE(MIN_OFFSET, MAX_OFFSET);
+	            str_to_write = wrong_str;
+	        }
+
+	       line_counter++; /* only needed when writing errors */
+        }
+
+		write(fd, str_to_write, txt_size);
 	}
 
 	if(use_locks) {
 		flock(fd, LOCK_UN);
 	}
+
+	if (enable_writing_errors && wrong_str != NULL)
+		free(wrong_str);
 
 	close(fd);
 }
@@ -43,3 +76,4 @@ void writer(int file_num, char *txt, int txt_len, int use_locks) {
 char *get_writer_string(int index){
 	return (char*) writer_strings[index];
 }
+

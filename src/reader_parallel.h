@@ -1,5 +1,8 @@
 #ifndef __READER_PARALLEL_H__
 	#define __READER_PARALLEL_H__
+	
+	#define SEM_PSHARED_VAL 0 // share between threads
+	#define SEM_INIT_VAL 0 // initial semaphore value 
 
 	/**
 	* @brief Creates a thread prepared with reader credentials. Said thread then brings

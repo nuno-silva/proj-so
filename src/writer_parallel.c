@@ -12,8 +12,6 @@
 #include "writer.h"
 
 #define BUFFER_CHAR_COUNT 32
-#define MIN_OFFSET 1
-#define MAX_OFFSET 100
 
 static int use_locks = TRUE;
 static int enable_writing_errors = FALSE;
@@ -47,38 +45,14 @@ void sigusr2_handler(int sig_num) {
 void *writer_thread(void *p) {
     int file_num;
     char *rand_str;
-    int error_line_counter = 0; /* if it's even, don't introduce an error, else, do */
-    int str_length = 0; /* size of the string to write */
-    int str_index = 0;
-    char* wrong_str;
+    
     
 	while(1) { /* TODO terminate loop on signal*/
         
         file_num = RANDOM_RANGE(0, 4);
         rand_str = get_writer_string( RANDOM_RANGE(0, WRITER_STRING_COUNT - 1) );
         
-        if (error_line_counter%2) {
-            /* if the number is odd, introduce an error in that line */
-            str_length = strlen(rand_str);
-            wrong_str = malloc( (strlen + 1)*sizeof(char) );
-            strcpy(wrong_str, rand_str);
-            str_index = RANDOM_RANGE(0, str_length - 1);
-            /* change a character's offset on a random position to a random 
-            offset between 1 and 100 */
-            wrong_str[str_index] = wrong[str_index] + 
-                                        RANDOM_RANGE(MIN_OFFSET, MAX_OFFSET);
-        }
-        
-        if(enable_writing_errors) {
-            /* if the file should have errors, increment the
-            error_line_counter, so that the next line error writng is inverted
-            (i.e. if the previous one had an error introduced, the next one
-            won't and vice-versa */
-            error_line_counter++;
-            
-        }
-        
-        writer(file_num, rand_str, WRITER_STRING_LEN, use_locks);
+        writer(file_num, rand_str, WRITER_STRING_LEN, use_locks, enable_writing_errors);
 
 	}
 }

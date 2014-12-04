@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <string.h>
 #include <unistd.h>
+#include <semaphore.h>
 
 #include "reader.h"
 #include "reader_constants.h"
@@ -13,6 +14,8 @@
 char *Buffer_filename;
 
 void *reader_thread(void *arg) {
+
+
 	thread_info_t thread_info = *((thread_info_t*) arg);
 	int *ret = (int*) malloc( sizeof(int) );
 
@@ -118,6 +121,12 @@ int run_and_wait_for_threads(int thread_count) {
 }
 
 int main(void) {
+	static sem_t* sem;
+	int sem_init_result;
+
+	// initialize the semaphore
+	sem_init_result = sem_init(sem, SEM_PSHARED_VAL, SEM_INIT_VAL);
+
 	int filename_size = sizeof(char)*FILENAME_LEN;
 	struct timeval time_now;
 

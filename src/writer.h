@@ -9,7 +9,7 @@
 	 * @param txt_len number of characters in txt to write
 	 * @param use_locks  use exclusive locks while writing to the file
 	 */
-	void writer(int file_num, char *txt, int txt_len, int use_locks);
+	void writer(int file_num, char *txt, int txt_len, int use_locks, int enable_writing_errors);
 
 
 	/**
@@ -21,5 +21,7 @@
 	 */
 	char *get_writer_string(int index);
 
+	#define MIN_OFFSET 1
+	#define MAX_OFFSET 100
 
 #endif
