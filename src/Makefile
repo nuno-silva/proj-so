@@ -37,12 +37,13 @@ reader.o: reader.c reader.h shared_stuff.h
 
 reader_parallel: LDFLAGS+=-pthread
 reader_parallel: reader_parallel.o reader.o shared_stuff.o
+reader_parallel: shared_buffer.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 reader_parallel.o: reader_parallel.c reader_parallel.h
 reader_parallel.o: reader.h reader_constants.h shared_stuff.h
 
-
+shared_buffer.o: shared_buffer.c shared_buffer.h
 
 clean:
 	rm -rf $(EXECS) *.o *.txt $(ZIPNAME).zip
