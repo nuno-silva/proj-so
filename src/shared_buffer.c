@@ -45,7 +45,7 @@ item_t shared_buffer_consume( shared_buffer_t *s ) {
 		exit(-1);
 	}
 	
-	item = s->buffer[s->index--];
+	item = s->buffer[--(s->index)];
 	
 	
 	if (pthread_mutex_unlock(&(s->mutex)) !=0 ) {
@@ -89,7 +89,7 @@ int shared_buffer_init( shared_buffer_t *s, int pshared_val, size_t size ) {
 	
 	pthread_mutex_init(&(s->mutex), NULL);
 	
-	s->index = -1; /* initially array has no elements */
+	s->index = 0;
 	
 	s->size = size;
 
