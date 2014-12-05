@@ -78,11 +78,11 @@ void process_command(char* command) {
 	}
 
 	else if (!strcmp(command, SIGUSR1_COMMAND)) {
-		/* TODO: call appropriare fuction */
+		kill(writer_pid, SIGUSR1);
 	}
 
 	else if (!strcmp(command, SIGUSR2_COMMAND)) {
-		/* TODO: call appropriare fuction */
+		kill(writer_pid, SIGUSR2);
 	}
 
 	else {
