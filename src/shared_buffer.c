@@ -69,23 +69,19 @@ int shared_buffer_init( shared_buffer_t *s, int pshared_val, size_t size ) {
 	s->buffer = (item_t*) malloc( sizeof(item_t) * size);
 	if( s->buffer == NULL) {
 		printf("Error allocating shared buffer\n");
-		exit(-1);
+		return -1;
 	}
 	
 	/* initially all slots are empty */
 	if (sem_init(&(s->empty), pshared_val, size) == -1) {
-		/* error occured */
-		/* TODO: treat error */
-		printf("Error initliazing the semaphore\n");
-		exit(-1);
+		printf("Error initliazing *empty* semaphore. errno=%d\n", errno);
+		return -1;
 	}
 	
 	/* intially there are no occupied slots */
 	if (sem_init(&(s->occupied), pshared_val, 0) == -1) {
-		/* error occured */
-		/* TODO: treat error */
-		printf("Error initliazing the semaphore\n");
-		exit(-1);
+		printf("Error initliazing *occupied* semaphore. errno=%d\n", errno);
+		return -1;
 	}
 	
 	pthread_mutex_init(&(s->mutex), NULL);
@@ -101,17 +97,17 @@ int shared_buffer_close(shared_buffer_t *s ) {
 	
 	if (sem_destroy(&(s->occupied)) == -1) {
 		printf("Error closing *occupied* semaphore. errno=%d\n", errno);
-		exit(-1);
+		return -1;
 	}
 	
 	if (sem_destroy(&(s->empty)) == -1) {
-		printf("Error closing *empty* semaphore\n");
-		exit(-1);
+		printf("Error closing *empty* semaphore. errno=%d\n", errno);
+		return -1;
 	}
 	
 	if (pthread_mutex_destroy(&(s->mutex)) != 0) {
 		printf("Error destroying *mutex*\n");
-		exit(-1);
+		return -1;
 	} 
 	
 	free( s->buffer );
