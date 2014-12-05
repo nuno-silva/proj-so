@@ -25,6 +25,8 @@ int read_command_from_fd(int fd, char * buff, size_t buff_size) {
 		if (read_res == -1) {
 			DBG_PRINT("read() failed.\n");
 			return -1;
+		} else if( read_res == 0) { /* EOF */
+			return -1;
 		}
 
 		if (buff[count] == '\n' || buff[count] == ' ') {

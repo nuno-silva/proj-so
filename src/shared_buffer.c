@@ -2,12 +2,13 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 void shared_buffer_insert( shared_buffer_t *s, item_t i ) {
 	
 	/* lock if there are no empty slots */
 	if (sem_wait(&(s->empty)) != 0) {
-		printf("Error waiting on semaphore\n");
+		printf("Error waiting on semaphore. errno=%d\n", errno);
 		exit(-1);
 	}
 	
@@ -24,7 +25,7 @@ void shared_buffer_insert( shared_buffer_t *s, item_t i ) {
 	}
 	
 	if (sem_post(&(s->occupied)) != 0) {
-		printf("Error posting on semaphore\n");
+		printf("Error posting on semaphore.\n");
 		exit(-1);
 	}
 	
@@ -98,12 +99,12 @@ int shared_buffer_init( shared_buffer_t *s, int pshared_val, size_t size ) {
 
 int shared_buffer_close(shared_buffer_t *s ) {
 	
-	if (sem_close(&(s->occupied)) == -1) {
-		printf("Error closing *occupied* semaphore\n");
+	if (sem_destroy(&(s->occupied)) == -1) {
+		printf("Error closing *occupied* semaphore. errno=%d\n", errno);
 		exit(-1);
 	}
 	
-	if (sem_close(&(s->empty)) == -1) {
+	if (sem_destroy(&(s->empty)) == -1) {
 		printf("Error closing *empty* semaphore\n");
 		exit(-1);
 	}
