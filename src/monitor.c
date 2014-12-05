@@ -8,8 +8,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-static int writer_pid = NULL;
-static int reader_pid = NULL;
+static int writer_pid = 0;
+static int reader_pid = 0;
 static int reader_pipe_fd[2];
 
 int run_proccess(char* prog_path, int* stdin_pipe_fd) {
