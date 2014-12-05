@@ -12,6 +12,7 @@ CFLAGS+= -D_POSIX_C_SOURCE
 LDFLAGS =
 EXECS  = reader_parallel
 EXECS += writer_parallel
+EXECS += monitor
 ZIPNAME = ex5-g46
 
 all: $(EXECS)
@@ -44,6 +45,11 @@ reader_parallel: shared_buffer.o
 
 reader_parallel.o: reader_parallel.c reader_parallel.h
 reader_parallel.o: reader.h reader_constants.h shared_stuff.h
+
+monitor: monitor.o shared_stuff.o
+	$(LD) $(LDFLAGS) $^ -o $@
+monitor.o: monitor.c monitor.h shared_stuff.h
+
 
 shared_buffer.o: shared_buffer.c shared_buffer.h
 

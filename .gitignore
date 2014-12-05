@@ -45,4 +45,5 @@ finals
 # binaries
 src/writer_parallel
 src/reader_parallel
+src/monitor
 
