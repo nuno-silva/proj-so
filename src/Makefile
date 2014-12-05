@@ -29,7 +29,7 @@ writer_parallel: writer_parallel.o writer.o shared_stuff.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 writer_parallel.o: writer_parallel.c writer_parallel.h
-writer_parallel.o: writer.h writer_constants.h shared_stuff.h
+writer_parallel.o: writer.h shared_stuff.h
 
 
 writer.o: writer.c writer.h shared_stuff.h
@@ -44,7 +44,7 @@ reader_parallel: shared_buffer.o
 	$(LD) $(LDFLAGS) $^ -o $@
 
 reader_parallel.o: reader_parallel.c reader_parallel.h
-reader_parallel.o: reader.h reader_constants.h shared_stuff.h
+reader_parallel.o: reader.h shared_stuff.h shared_buffer.h
 
 monitor: monitor.o shared_stuff.o
 	$(LD) $(LDFLAGS) $^ -o $@

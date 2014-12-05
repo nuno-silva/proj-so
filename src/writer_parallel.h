@@ -1,6 +1,8 @@
 #ifndef __WRITER_PARALLEL_H__
 	#define __WRITER_PARALLEL_H__
 	
+    #define THREAD_COUNT 10
+    
 	/**
 	 * @brief Runs writer threads and waits for them to finish.
 	 * 

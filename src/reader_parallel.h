@@ -1,6 +1,11 @@
 #ifndef __READER_PARALLEL_H__
 	#define __READER_PARALLEL_H__
 
+	#define READER_THREAD_COUNT 3
+	
+	#define ITEM_BUFFER_SIZE	32
+	#define INPUT_BUFFER_SIZE	( sizeof(char) * 255 )
+	
 
 	void *reader_thread(void *arg);
 

@@ -10,7 +10,6 @@
 
 #include "reader.h"
 #include "shared_stuff.h"
-#include "reader_constants.h"
 
 static const int reader_f_flags = O_RDONLY;
 

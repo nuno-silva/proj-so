@@ -2,6 +2,10 @@
 	#define __READER_H__
 
 
+	#define FILE_IS_VALID	 0
+	#define FILE_IS_INVALID	-1
+	
+	
 	/**
 	 * @brief Check the specified file for consistency.
 	 *

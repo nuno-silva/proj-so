@@ -6,14 +6,10 @@
 #include <unistd.h>
 
 #include "reader.h"
-#include "reader_constants.h"
 #include "reader_parallel.h"
 #include "shared_stuff.h"
 #include "shared_buffer.h"
 
-
-#define ITEM_BUFFER_SIZE	30
-#define INPUT_BUFFER_SIZE	( sizeof(char) * 255 )
 
 shared_buffer_t Item_Buffer;
 

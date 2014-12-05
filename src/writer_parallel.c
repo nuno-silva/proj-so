@@ -8,7 +8,6 @@
 
 #include "writer_parallel.h"
 #include "shared_stuff.h"
-#include "writer_constants.h"
 #include "writer.h"
 
 #define BUFFER_CHAR_COUNT 32
