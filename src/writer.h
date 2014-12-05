@@ -22,6 +22,6 @@
 	char *get_writer_string(int index);
 
 	#define MIN_OFFSET 1
-	#define MAX_OFFSET 100
+	#define MAX_OFFSET 10
 
 #endif
