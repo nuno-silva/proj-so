@@ -12,7 +12,8 @@
 #include "shared_buffer.h"
 
 
-#define ITEM_BUFFER_SIZE 10
+#define ITEM_BUFFER_SIZE	30
+#define INPUT_BUFFER_SIZE	( sizeof(char) * 255 )
 
 shared_buffer_t Item_Buffer;
 
@@ -74,33 +75,9 @@ int wait_for_threads(pthread_t **threads, int thread_count) {
 	return 0;
 }
 
-void process_input_for_buffer(char *input, size_t input_length) {
-	size_t concurrent = 0;
-	int temp_len;
-	char *temp = NULL,
-		 *toSend = NULL;
-	char *end = input + input_length;
-	
-	/* Begin extracting information from input */
-	temp = strtok(input, " ");
-	do {
-		temp_len = strlen(temp);
-		removeNewLine(temp, temp_len);
-		DBG_PRINTF("Processing \"%s\"\n", temp);
-		
-		toSend = (char*) malloc(sizeof(char) * (temp_len + 1));
-		strcpy(toSend, temp);
-		shared_buffer_insert( &Item_Buffer, (item_t) toSend );
-		
-		concurrent += temp_len;
-		temp = strtok(NULL, " ");
-	} while (temp != NULL && temp < end);
-}
-
 int main(void) {
-	int i,
-		ret_result = 0;
-	char *input = NULL;
+	int i;
+	char *input_buffer;
 	struct timeval time_now;
 	pthread_t *threads;
 	
@@ -109,27 +86,39 @@ int main(void) {
 	srand(time_now.tv_usec);
 
 	/* Initialize shared buffer */
-	ret_result = shared_buffer_init(&Item_Buffer, 0, ITEM_BUFFER_SIZE);
- 	if ( ret_result ) {
-		DBG_PRINTF("shared_buffer_init failed with %d\n", ret_result);
-		return EXIT_FAILURE;
+ 	if ( shared_buffer_init(&Item_Buffer, 0, ITEM_BUFFER_SIZE) != 0 ) {
+		printf("Could not allocate shared buffer.\n");
+		exit(-1);
 	}
 
 	/*	Launching threads BEFORE capturing any input	*/
-	run_threads( &threads, READER_THREAD_COUNT );
+	if( run_threads( &threads, READER_THREAD_COUNT ) != 0 ) {
+		printf("Could run threads.\n");
+		exit(-1);
+	}
+
+	/* allocate input_buffer */
+	input_buffer = (char*) malloc( INPUT_BUFFER_SIZE );
+	if( input_buffer == NULL) {
+		printf("Could not allocate input buffer.\n");
+		exit(-1);
+	}
 
 	while (TRUE) {
-		input = (char*) malloc(sizeof(char) * INPUT_LEN);
-		read(0, input, INPUT_LEN);
+		read_command_from_fd(STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);
 		
-		DBG_PRINTF("input to be processed = %s\n", input);
+		DBG_PRINTF("input to be processed = %s\n", input_buffer);
 		
-		process_input_for_buffer(input, INPUT_LEN);
+		process_file(input_buffer);
 	}
 	
+	free(input_buffer);
+	
+	
 	/* make threads quit (produce_n_NULLs()) */
-	for (i = 0; i < READER_THREAD_COUNT; i++)
-		process_input_for_buffer(NULL, INPUT_LEN);
+	for ( i = 0; i < READER_THREAD_COUNT; i++ ) {
+		shared_buffer_insert( &Item_Buffer, (item_t) NULL );
+	}
 	
 	wait_for_threads( &threads, READER_THREAD_COUNT );
 	
@@ -138,3 +127,13 @@ int main(void) {
 	return EXIT_SUCCESS;
 }
 
+
+void process_file( char* filename ) {
+	char* item = (char*) malloc( (strlen(filename) + 1) * sizeof(char) );
+	if(item == NULL) {
+		printf("Could not allocate memory.\n");
+		return;
+	}
+	strcpy(item, filename);
+	shared_buffer_insert( &Item_Buffer, (item_t) item );
+}
