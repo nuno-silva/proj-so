@@ -12,7 +12,8 @@
 
 	void *writer_thread(void *p);
 	
-	void sigusr1_handler(int number);
+	void sigusr1_handler(int sig_num);
 	void sigusr2_handler(int sig_num);
+	void sigtstp_handler(int sig_num);
 	
 #endif /* __WRITER_PARALLEL_H__ */
