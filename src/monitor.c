@@ -38,7 +38,7 @@ void exit_monitor(pid_t writer_pid, pid_t reader_pid) {
 	}
 	close(pipefd[1]);
 	close(pipefd[0]);
-	kill(reader_pid, SIGSTP);
+	kill(writer_pid, SIGSTP);
 	
 	if (wait(writer_pid) == -1) { 
 		DBG_PRINT("failed waiting on writer_pid\n");
