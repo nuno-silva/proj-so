@@ -127,7 +127,7 @@ int main(void) {
 			break;
 		}
 		
-		DBG_PRINTF("input to be processed = %s\n", input_buffer);
+		DBG_PRINTF("input = '%s'\n", input_buffer);
 		
 		process_file(input_buffer);
 	}

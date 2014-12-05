@@ -3,152 +3,123 @@
 
 #include <unistd.h>
 #include <signal.h> /* needs -D_POSIX_C_SOURCE if using -ansi */
+#include <sys/wait.h>
+#include <sys/errno.h>
+#include <string.h>
+#include <stdlib.h>
 
-static pid_t writer_pid = NULL;
-static pid_t reader_pid = NULL;
+static int writer_pid = NULL;
+static int reader_pid = NULL;
+static int reader_pipe_fd[2];
 
-pid_t run_writer(char* prog_path, int* pipefd) {
-	int fork_res;
-	fork_res = fork();
+int run_proccess(char* prog_path, int* stdin_pipe_fd) {
+	int res;
+	res = fork();
 
-	if (fork_res == 0) {
+	if (res == 0) {
 		/* child */
-		if (pipefd != NULL) {
+		if (stdin_pipe_fd != NULL) {
 			close(STDIN_FILENO); /* close the normal stdin */
-			dup2(*pipefd[1], STDIN_FILENO);
+			dup(stdin_pipe_fd[0]); /* duplicate the reading end of the pipe */
+			close(stdin_pipe_fd[0]); /* not needed anymore -> it's stdin now */
+			close(stdin_pipe_fd[1]); /* not needed anymore -> parent writing end */
 		}
-			execl(prog_path, NULL);
-
+		res = execl(prog_path, prog_path, (const char*)NULL);
+		if( res == -1 ){
+			printf("execl failed. errno=%d\n", errno);
+		}
 	}
-	else if (fork_res == -1) {
+	else if (res == -1) {
 		/* error */
-		DBG_PRINT("fork() error\n");
+		printf("fork failed. errno=%d\n", errno);
 	}
-	else { 
+	else {
 		/* parent */
-		return fork_res;
+		return res;
 	}
+	return -1;
 }
 
-void exit_monitor(pid_t writer_pid, pid_t reader_pid) {
-	if (writer_pid == NULL || reader_pid == NULL) {
+void exit_monitor() {
+	if ( !writer_pid || !reader_pid ) {
 		/* something went wrong here... */
 		DBG_PRINT("invalid children pid's\n");
 		exit(-1);
 	}
-	close(pipefd[1]);
-	close(pipefd[0]);
-	kill(writer_pid, SIGSTP);
 	
-	if (wait(writer_pid) == -1) { 
+	/* EOF in reader */
+	close(reader_pipe_fd[0]);
+	close(reader_pipe_fd[1]);
+	
+	/* send SIGTSTP to writer */
+	kill(writer_pid, SIGTSTP);
+	
+	if (waitpid(writer_pid, NULL, 0) == -1) { 
 		DBG_PRINT("failed waiting on writer_pid\n");
 		exit(-1);
 	}
 	
-	if (wait(reader_pid)== -1){
+	if (waitpid(reader_pid, NULL, 0) == -1){
 		 DBG_PRINT("failed waiting on reader_pid\n");
 		 exit(-1);
 	}
-	return 0;
 }
 
 int main(void) {
-	int pipefd[2];
-	int read_res;
-	int index;
-	char* in_buffer[BUFFER_SIZE];
-	char* aux_buffer[AUX_BUFFER_SIZE];
+	int ret;
+	int quit = FALSE;
+	char input_buffer[INPUT_BUFFER_SIZE];
 
-	if (pipe(pipefd) == -1)
+	/* pipe for reder's stdin */
+	if (pipe(reader_pipe_fd) == -1) {
 		DBG_PRINT("Error while creating the pipe\n");
-
-	writer_pid = run_proccess((char*)READER_PATH, &pipefd, );
+	}
 	
-	reader_pid = run_proccess((char*)READER_PATH, NULL);
+	writer_pid = run_proccess((char*)WRITER_PATH, NULL );
+	if(reader_pid == -1) {
+		printf("Could not start writer.\n");
+		exit(-1);
+	}
 	
-	/* TODO: associate pipe */
-	close(STDOUT_FILENO); /* close the normal stdout */
-	dup2(*pipefd[0], STDOUT_FILENO);
+	
+	reader_pid = run_proccess((char*)READER_PATH, reader_pipe_fd);
+	if(reader_pid == -1) {
+		printf("Could not start reader.\n");
+		exit(-1);
+	}
+	
+	
+	while (!quit) {
+		ret = read_command_from_fd(STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);
+		if( ret != 0 ) {
+			printf("Monitor will quit.\n");
+			break;
+		}
+		
+		DBG_PRINTF("input = '%s'\n", input_buffer);
+		
+		quit = process_command(input_buffer);
+	}
+	
+	exit_monitor();
+	return 0;
 }
 
-void process_command(char* command) {
+int process_command(char* command) {
+	DBG_PRINTF("command = %s\n", command);
 
 	if (!strcmp(command, EXIT_COMMAND)) {
-		exit_monitor(writer_pid, reader_pid);
+		return 1;
 	}
-
 	else if (!strcmp(command, SIGUSR1_COMMAND)) {
 		kill(writer_pid, SIGUSR1);
 	}
-
 	else if (!strcmp(command, SIGUSR2_COMMAND)) {
 		kill(writer_pid, SIGUSR2);
 	}
-
-	else {
-		/* TODO: send filename to reder */
+	else { /* send command to writer */
+		write(reader_pipe_fd[1], command, strlen(command)*sizeof(char));
+		write(reader_pipe_fd[1], LINE_FEED, LINE_FEED_LEN*sizeof(char));
 	}
-
-
+	return 0;
 }
-
-
-
-
-void process_input(fd, buff, buff_size) {
-	int i;
-
-	for (i = 0; i < input_size; i++) {
-
-		if (in_buff[i] == ' ') {
-			// TODO: proccess aux_buffer
-			aux_buffer[i] = '\0';
-			process_command();
-			aux_buffer[0] = '\0'; /* clear aux buffer */
-		}
-		aux_buff[i] = in_buffer[i];
-	}
-}
-
-/*
-SO-12.txt SO-13.txt sair
-*/
-
-/*
-int main (void) {
-	int writer_pid;
-	int reader_pipe_fd;
-
-	writer_pid = run_writer();
-	// TODO: test for errors 
-
-	reader_pipe_fd = run_reader();
-	/* TODO: test for errors 
-
-	for( ;; ) {
-		//TODO: read command 
-		// TODO: process command and call corresponding function  
-
-		if (line == "sair") {
-			close READER:
-				end processing of the current file;
-				close pipe;
-			send SIGSTP to writer:
-				end processing of the current file;
-				// this ends the writer
-
-		wait(writer);
-		wait(reader);
-
-		end myself;
-		}
-
-		if (line == il)
-				send SIGUSR1 to writer;
-
-		if(line == ie)
-			send SIGUSR2 to writer;
-	}
-
-}
-*/)

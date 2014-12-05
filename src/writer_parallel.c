@@ -58,6 +58,7 @@ void *writer_thread(void *p) {
 	int file_num;
 	char *rand_str;
 	
+	DBG_PRINT("writer_thread running.\n");
 	while (!stop_writing) {
 		
 		file_num = RANDOM_RANGE(0, 4);
