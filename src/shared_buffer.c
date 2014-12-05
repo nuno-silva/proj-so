@@ -65,6 +65,12 @@ item_t shared_buffer_consume( shared_buffer_t *s ) {
 
 int shared_buffer_init( shared_buffer_t *s, int pshared_val, size_t size ) {
 	
+	s->buffer = (item_t*) malloc( sizeof(item_t) * size);
+	if( s->buffer == NULL) {
+		printf("Error allocating shared buffer\n");
+		exit(-1);
+	}
+	
 	/* initially all slots are empty */
 	if (sem_init(&(s->empty), pshared_val, size) == -1) {
 		/* error occured */
@@ -107,6 +113,7 @@ int shared_buffer_close(shared_buffer_t *s ) {
 		exit(-1);
 	} 
 	
+	free( s->buffer );
 	return 0;
 }
 	
