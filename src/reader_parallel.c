@@ -18,13 +18,28 @@
 shared_buffer_t Item_Buffer;
 
 void *reader_thread(void *arg) {
+	char * filename;
+	int result;
 	(void) arg; /* suppress unused variable warning */
 
 	DBG_PRINT("Reader thread running\n");
-	
-	/* TODO: consume */
-	/* TODO: process */
-	/* TODO: free */
+	while(1) {
+		filename = shared_buffer_consume(&Item_Buffer);
+		if( filename == NULL) {
+			DBG_PRINT("Thread exiting\n");
+			break;
+		}
+		
+		DBG_PRINTF("Thread reading %s\n", filename);
+		
+		/* process the file */
+		result = reader(filename);
+		if( result == FILE_IS_INVALID ) {
+			printf("%s is invalid.\n", filename);
+		}
+		
+		free(filename);
+	}
 	return NULL;
 }
 
@@ -77,6 +92,7 @@ int wait_for_threads(pthread_t **threads, int thread_count) {
 
 int main(void) {
 	int i;
+	int ret;
 	char *input_buffer;
 	struct timeval time_now;
 	pthread_t *threads;
@@ -105,7 +121,11 @@ int main(void) {
 	}
 
 	while (TRUE) {
-		read_command_from_fd(STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);
+		ret = read_command_from_fd(STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);
+		if( ret != 0 ) {
+			printf("Reader quit.\n");
+			break;
+		}
 		
 		DBG_PRINTF("input to be processed = %s\n", input_buffer);
 		
@@ -135,5 +155,6 @@ void process_file( char* filename ) {
 		return;
 	}
 	strcpy(item, filename);
+	DBG_PRINTF("process_file insert item %s\n", item);
 	shared_buffer_insert( &Item_Buffer, (item_t) item );
 }

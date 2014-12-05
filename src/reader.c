@@ -78,7 +78,7 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	for ( i = 0 ; i < line_count && read(fd, line_buffer, line_size) == line_size; i++ )
 	{
 		if ( strncmp(line_buffer, first_line_buf, line_length) != 0 ) {
-			DBG_PRINTF( "invalid file detected here (unconsistent line); fd=%d, first_line=%d, i=%d\n",
+			DBG_PRINTF( "invalid file detected here (inconsistent line); fd=%d, first_line=%d, i=%d\n",
 			            fd, first_line, i );
 			free(first_line_buf);
 			free(line_buffer);
