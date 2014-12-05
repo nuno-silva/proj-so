@@ -97,6 +97,7 @@ int run_and_wait_for_threads(int thread_count) {
 		}
 	}
 	
+	printf("Writer running with %d threads.\n", thread_count);
 	
 	/* wait for threads */
 	for (i = 0; i < thread_count; i++) {
@@ -157,7 +158,7 @@ int main() {
 	/* converter e imprimir a data */
 	curtime = tvstart.tv_sec;
 	strftime(buffer, BUFFER_CHAR_COUNT, "%m-%d-%Y  %T.", localtime(&curtime));
-	printf("inicio: %s%ld\n", buffer, (long int)tvstart.tv_usec);
+	printf("Writer: started on %s%ld\n", buffer, (long int)tvstart.tv_usec);
 	
 	
 	ret = run_and_wait_for_threads(THREAD_COUNT);
@@ -170,13 +171,13 @@ int main() {
 	/* converter e imprimir a data */
 	curtime = tvend.tv_sec;
 	strftime(buffer, BUFFER_CHAR_COUNT, "%m-%d-%Y  %T.", localtime(&curtime));
-	printf("fim: %s%ld\n", buffer, (long int)tvend.tv_usec);
+	printf("Writer: ended on %s%ld\n", buffer, (long int)tvend.tv_usec);
 	
 	/* calcular e imprimir a diferenca de datas */
 	tvduration.tv_sec = tvend.tv_sec - tvstart.tv_sec;
 	tvduration.tv_usec = tvend.tv_usec - tvstart.tv_usec;
 	duration_us = tvduration.tv_sec * 1000000 + tvduration.tv_usec;
-	printf("duracao: %.4f segundos\n", ((float)duration_us)/1000000.0f);
+	printf("Writer: rand for %.4f segundos\n", ((float)duration_us)/1000000.0f);
 	
 	
 	return ret;

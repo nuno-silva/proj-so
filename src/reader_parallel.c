@@ -11,7 +11,7 @@
 #include "shared_buffer.h"
 
 
-shared_buffer_t Item_Buffer;
+static shared_buffer_t Item_Buffer;
 
 void *reader_thread(void *arg) {
 	char * filename;
@@ -31,7 +31,10 @@ void *reader_thread(void *arg) {
 		/* process the file */
 		result = reader(filename);
 		if( result == FILE_IS_INVALID ) {
-			printf("%s is invalid.\n", filename);
+			printf("'%s' is invalid.\n", filename);
+		}
+		else {
+			printf("'%s' is valid.\n", filename);
 		}
 		
 		free(filename);
@@ -115,7 +118,8 @@ int main(void) {
 		printf("Could not allocate input buffer.\n");
 		exit(-1);
 	}
-
+	
+	printf("Reader running with %d threads.\n", READER_THREAD_COUNT);
 	while (TRUE) {
 		ret = read_command_from_fd(STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);
 		if( ret != 0 ) {
