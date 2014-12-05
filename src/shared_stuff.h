@@ -30,6 +30,6 @@
 
 	extern char writer_strings[ WRITER_STRING_COUNT ][ WRITER_STRING_LEN + 1 ];
 
-	void removeNewLine(char *input, int size);
+	int read_command_from_fd(int fd, char * buff, size_t buff_size);
 
 #endif
