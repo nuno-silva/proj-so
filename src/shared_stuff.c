@@ -29,7 +29,10 @@ int read_command_from_fd(int fd, char * buff, size_t buff_size) {
 			return -1;
 		}
 
-		if (buff[count] == '\n' || buff[count] == ' ') {
+		if (buff[count] == '\n' || buff[count] == '\r' || buff[count] == ' '|| buff[count] == '\0') {
+			if(count == 0) {
+				continue; /* ignore empty command */
+			}
 			buff[count] = '\0';
 			return 0;
 		}
