@@ -131,7 +131,7 @@ int main(void) {
 	free(input_buffer);
 	
 	
-	/* make threads quit (produce_n_NULLs()) */
+	/* make threads quit (insert READER_THREAD_COUNT NULLs) */
 	for ( i = 0; i < READER_THREAD_COUNT; i++ ) {
 		shared_buffer_insert( &Item_Buffer, (item_t) NULL );
 	}

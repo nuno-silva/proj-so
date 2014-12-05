@@ -14,9 +14,13 @@
 
 static int use_locks = TRUE;
 static int enable_writing_errors = FALSE;
+
+/** TRUE if we should quit the program */
 static int stop_writing = FALSE;
 
-/** Handles SIGUSR1 signal, which inverts Lock usage */
+/** Handles the SIGUSR1 signal, which inverts Lock usage
+ * @param sig_num the number of the calling signal
+ */
 void sigusr1_handler(int sig_num) {
 	(void) sig_num; /* suppress unused variable warning */
 	use_locks = !use_locks;
@@ -29,22 +33,24 @@ void sigusr1_handler(int sig_num) {
 	}
 }
 
-/* Handles SIGUSR2, which inverts error writing */
+/** Handles the SIGUSR2, which inverts error writing 
+ * @param sig_num the number of the calling signal
+ */
 void sigusr2_handler(int sig_num) {
 	(void) sig_num; /* suppress unused variable warning */
-	/* sig_num is the number of the calling signal */
 	enable_writing_errors = !enable_writing_errors;
 	
 	if (enable_writing_errors) {
 		DBG_PRINT("Writing with errors.\n");
 	}
-	
 	else {
 		DBG_PRINT("Writing without errors.\n");
 	}
 }
 
-/** Handles SIGTSTP signal, which lets them finish writing to lead to their termination */
+/** Handles the SIGTSTP signal, which terminates the program
+ * @param sig_num the number of the calling signal
+ */
 void sigtstp_handler(int sig_num) {
 	(void) sig_num; /* suppress unused variable warning */
 	stop_writing = TRUE;
