@@ -4,144 +4,137 @@
 #include <sys/time.h>
 #include <string.h>
 #include <unistd.h>
-#include <semaphore.h>
 
 #include "reader.h"
 #include "reader_constants.h"
 #include "reader_parallel.h"
 #include "shared_stuff.h"
+#include "shared_buffer.h"
 
-char *Buffer_filename;
+
+#define ITEM_BUFFER_SIZE 10
+
+shared_buffer_t Item_Buffer;
 
 void *reader_thread(void *arg) {
+	(void) arg; /* suppress unused variable warning */
 
-
-	thread_info_t thread_info = *((thread_info_t*) arg);
-	int *ret = (int*) malloc( sizeof(int) );
-
-	if (ret == NULL || arg == NULL)
-		exit(-1);
-
-	DBG_PRINTF("Thread will read from %d to %d\n",
-	thread_info.first_line, thread_info.last_line);
-
-	*ret = reader_ranged(Buffer_filename, thread_info.first_line, thread_info.last_line);
-
-	pthread_exit((void*) ret);
+	DBG_PRINT("Reader thread running\n");
+	
+	/* TODO: consume */
+	/* TODO: process */
+	/* TODO: free */
+	return NULL;
 }
 
-int run_and_wait_for_threads(int thread_count) {
-	int i;
-	int error;
-	int portion_size, remaining;
-	int last_thread_i;
-	int **thread_results;
-	pthread_t *threads;
-	thread_info_t *thread_info;
-
-	thread_results = (int**) malloc( sizeof(int*) * thread_count );
-	if (thread_results == NULL) {
-		printf("Could not allocate memory for 'thread_results'\n");
-		return -1;
-	}
-
-	threads = (pthread_t*) malloc( sizeof(pthread_t) * thread_count );
+int run_threads(pthread_t **threads, int thread_count) {
+	int i,
+		error;
 	if (threads == NULL) {
-		free(thread_results);
+		return 0;
+	}
+	
+	*threads = (pthread_t*) malloc( sizeof(pthread_t) * thread_count );
+	if (*threads == NULL) {
+		free(*threads);
 		printf("Could not allocate memory for 'threads'\n");
 		return -1;
 	}
-
-	thread_info = (thread_info_t*) malloc( sizeof(thread_info_t) * thread_count );
-	if (thread_info == NULL) {
-		free(thread_results);
-		free(threads);
-		printf("Could not allocate memory for 'thread_info'\n");
-		return -1;
-	}
-
-	portion_size	= LINES_PER_FILE / thread_count;
-	remaining		= LINES_PER_FILE % thread_count;
-
-	last_thread_i = thread_count - 1;
-
+	
 	/* start threads */
 	for (i = 0; i < thread_count; i++) {
-		DBG_PRINTF("Populating info for thread %d.\n", i);
-		thread_info[i].filename = malloc(sizeof(char)*strlen(Buffer_filename));
-
-		/* populate thread_info */
-		strcpy(thread_info[i].filename, Buffer_filename);
-		thread_info[i].first_line	= i * portion_size;
-		thread_info[i].last_line	= thread_info[i].first_line + portion_size - 1;
-
-		if (i == last_thread_i) {
-			thread_info[i].last_line += remaining;
-		}
-
-		error = pthread_create( threads+i, NULL, reader_thread, thread_info + i );
+		DBG_PRINTF("Firing up thread %d.\n", i);
+		
+		error = pthread_create( (*threads)+i, NULL, reader_thread, NULL );
 		if (error != 0) {
 			printf("Error %d: Could not create thread %d\n", error, i);
-			free(thread_results);
-			free(threads);
-			free(thread_info);
+			free(*threads);
 			return -1;
 		}
 	}
-
-	/* wait for threads */
-	for (i = 0; i < thread_count; i++) {
-		error = pthread_join(threads[i], (void**) &(thread_results[i]));
-		if (error != 0) {
-			printf("Error %d: Thread %d could not be suspended\n", error, i);
-			free(thread_results);
-			free(threads);
-			free(thread_info);
-			return -1;
-		}
-		else {
-			if (thread_results[i] != NULL) {
-				printf("Thread %d returned %d\n", i, *thread_results[i]);
-				free(thread_results[i]);
-			}
-			else {
-				printf("Thread %d returned nothing\n", i);
-				free(thread_results);
-				free(threads);
-				free(thread_info);
-				return -1;
-			}
-		}
-	}
-
-	free(thread_results);
-	free(threads);
-	free(thread_info);
+	
 	return 0;
 }
 
+int wait_for_threads(pthread_t **threads, int thread_count) {
+	int i,
+		error;
+	
+	/* wait for threads */
+	for (i = 0; i < thread_count; i++) {
+		error = pthread_join( (*threads)[i], NULL );
+		if (error != 0) {
+			printf("Error %d: Thread %d could not be suspended\n", error, i);
+			free(*threads);
+			return -1;
+		}
+	}
+	
+	free(*threads);
+	return 0;
+}
+
+void process_input_for_buffer(char *input, size_t input_length) {
+	size_t concurrent = 0;
+	int temp_len;
+	char *temp = NULL,
+		 *toSend = NULL;
+	char *end = input + input_length;
+	
+	/* Begin extracting information from input */
+	temp = strtok(input, " ");
+	do {
+		temp_len = strlen(temp);
+		removeNewLine(temp, temp_len);
+		DBG_PRINTF("Processing \"%s\"\n", temp);
+		
+		toSend = (char*) malloc(sizeof(char) * (temp_len + 1));
+		strcpy(toSend, temp);
+		shared_buffer_insert( &Item_Buffer, (item_t) toSend );
+		
+		concurrent += temp_len;
+		temp = strtok(NULL, " ");
+	} while (temp != NULL && temp < end);
+}
+
 int main(void) {
-
-	int filename_size = sizeof(char)*FILENAME_LEN;
+	int i,
+		ret_result = 0;
+	char *input = NULL;
 	struct timeval time_now;
-
+	pthread_t *threads;
+	
 	/* use the current micro seconds as a random seed */
 	gettimeofday(&time_now, NULL);
 	srand(time_now.tv_usec);
 
-	/* Initializing buffer */
-	Buffer_filename = (char*) malloc(filename_size);
-
-	while (TRUE){
-		read(0, Buffer_filename, filename_size);
-
-		/* Removing trailing '\n' */
-		Buffer_filename[strlen(Buffer_filename) - 1] = '\0';
-
-		DBG_PRINTF("filename = %s\n", Buffer_filename);
-
-		run_and_wait_for_threads(READER_THREAD_COUNT);
+	/* Initialize shared buffer */
+	ret_result = shared_buffer_init(&Item_Buffer, 0, ITEM_BUFFER_SIZE);
+ 	if ( ret_result ) {
+		DBG_PRINTF("shared_buffer_init failed with %d\n", ret_result);
+		return EXIT_FAILURE;
 	}
 
-	return 0;
+	/*	Launching threads BEFORE capturing any input	*/
+	run_threads( &threads, READER_THREAD_COUNT );
+
+	while (TRUE) {
+		input = (char*) malloc(sizeof(char) * INPUT_LEN);
+		read(0, input, INPUT_LEN);
+		
+		DBG_PRINTF("input to be processed = %s\n", input);
+		
+		process_input_for_buffer(input, INPUT_LEN);
+	}
+	
+	/* make threads quit (produce_n_NULLs()) */
+	for (i = 0; i < READER_THREAD_COUNT; i++)
+		process_input_for_buffer(NULL, INPUT_LEN);
+	
+	wait_for_threads( &threads, READER_THREAD_COUNT );
+	
+	shared_buffer_close(&Item_Buffer);
+	
+	return EXIT_SUCCESS;
 }
+
