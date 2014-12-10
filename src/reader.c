@@ -49,7 +49,7 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	int line_size = line_length * sizeof(char);
 	DBG_PRINTF("fd=%d, line_size = %d\n", fd, line_size);
 
-	char *first_line_buf = (char*) malloc(line_size);
+	char *first_line_buf = (char*) calloc(line_count, sizeof(char));
 
 	/* try to read and validate the first line of the file */
 	if ( read(fd, first_line_buf, line_size) != line_size ) {
@@ -88,6 +88,8 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	/* did we read all expected lines? */
 	if ( i < line_count  ) {
 		DBG_PRINT("invalid file detected here (shorter than expected)\n");
+		free(first_line_buf);
+		free(line_buffer);
 		return FALSE;
 	}
 
@@ -95,6 +97,8 @@ int file_contents_are_valid(int fd, int line_length, int first_line, int last_li
 	if ( (first_line + i) >= LINES_PER_FILE ) { /* we are in the last line of the file */
 		if( read(fd, line_buffer, 1) > 0 ) { /* file is longer than expected */
 			DBG_PRINT("invalid file detected here (longer than expected)\n");
+			free(first_line_buf);
+			free(line_buffer);
 			return FALSE;
 		}
 	}
