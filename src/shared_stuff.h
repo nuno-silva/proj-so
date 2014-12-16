@@ -6,6 +6,20 @@
 	/* enables debug prints if defined; we define it in the makefile
 	#define DEBUG
 	*/
+	/* don't use colors for debug -- meh
+	#define DEBUG_NO_COLORS
+	*/
+
+	/* terminal colors for DEBUG_COLORS */
+	#define KNRM  "\x1B[0m"
+	#define KRED  "\x1B[31m"
+	#define KGRN  "\x1B[32m"
+	#define KYEL  "\x1B[33m"
+	#define KBLU  "\x1B[34m"
+	#define KMAG  "\x1B[35m"
+	#define KCYN  "\x1B[36m"
+	#define KWHT  "\x1B[37m"
+	#define KGRY  "\x1B[90m"
 
 	#define WRITER_STRING_LEN   10
 	#define WRITER_STRING_COUNT 10
@@ -18,8 +32,13 @@
 
 	/* used to print debug messages */
 	#ifdef DEBUG
-	    #define DBG_PRINTF(format, ...) printf("%s:%d: "format, __FILE__, __LINE__, __VA_ARGS__)
-	    #define DBG_PRINT(format) printf("%s:%d: "format, __FILE__, __LINE__)
+		#ifndef DEBUG_NO_COLORS
+			#define DBG_PRINTF(format, ...) printf(KYEL"%s"KGRY":"KBLU"%d"KGRY": " KRED format KNRM, __FILE__, __LINE__, __VA_ARGS__)
+			#define DBG_PRINT(format) printf(KYEL"%s"KGRY":"KBLU"%d"KGRY": " KGRN format KNRM, __FILE__, __LINE__)
+		#else
+			#define DBG_PRINTF(format, ...) printf("%s:%d: "format, __FILE__, __LINE__, __VA_ARGS__)
+			#define DBG_PRINT(format) printf("%s:%d: "format, __FILE__, __LINE__)
+		#endif
 	#else
 	    #define DBG_PRINTF(format, ...)
 	    #define DBG_PRINT(format)

@@ -20,6 +20,8 @@ all: $(EXECS)
 debug: CFLAGS += -DDEBUG -g -Wextra -Wunreachable-code -Wbad-function-cast
 debug: all
 
+debug_ncolor: CFLAGS+=-DDEBUG_NO_COLORS
+debug_ncolor: debug
 
 shared_stuff.o: shared_stuff.c shared_stuff.h
 
