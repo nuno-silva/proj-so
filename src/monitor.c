@@ -46,19 +46,19 @@ void exit_monitor() {
 		DBG_PRINT("invalid children pid's\n");
 		exit(-1);
 	}
-	
+
 	/* EOF in reader */
 	close(reader_pipe_fd[0]);
 	close(reader_pipe_fd[1]);
-	
+
 	/* send SIGTSTP to writer */
 	kill(writer_pid, SIGTSTP);
-	
-	if (waitpid(writer_pid, NULL, 0) == -1) { 
+
+	if (waitpid(writer_pid, NULL, 0) == -1) {
 		DBG_PRINT("failed waiting on writer_pid\n");
 		exit(-1);
 	}
-	
+
 	if (waitpid(reader_pid, NULL, 0) == -1){
 		 DBG_PRINT("failed waiting on reader_pid\n");
 		 exit(-1);
@@ -74,33 +74,33 @@ int main(void) {
 	if (pipe(reader_pipe_fd) == -1) {
 		DBG_PRINT("Error while creating the pipe\n");
 	}
-	
+
 	writer_pid = run_proccess((char*)WRITER_PATH, NULL );
-	if(reader_pid == -1) {
+	if(writer_pid == -1) {
 		printf("Could not start writer.\n");
 		exit(-1);
 	}
-	
-	
+
+
 	reader_pid = run_proccess((char*)READER_PATH, reader_pipe_fd);
 	if(reader_pid == -1) {
 		printf("Could not start reader.\n");
 		exit(-1);
 	}
-	
-	
+
+
 	while (!quit) {
 		ret = read_command_from_fd(STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);
 		if( ret != 0 ) {
 			printf("Monitor will quit.\n");
 			break;
 		}
-		
+
 		DBG_PRINTF("input = '%s'\n", input_buffer);
-		
+
 		quit = process_command(input_buffer);
 	}
-	
+
 	exit_monitor();
 	return 0;
 }
