@@ -53,23 +53,25 @@ void exit_monitor() {
 
 	/* send SIGTSTP to writer */
 	kill(writer_pid, SIGTSTP);
-
+	
+	DBG_PRINT("waiting for writer\n");
 	if (waitpid(writer_pid, NULL, 0) == -1) {
 		DBG_PRINT("failed waiting on writer_pid\n");
 		exit(-1);
 	}
 
+	DBG_PRINT("waiting for reader\n");
 	if (waitpid(reader_pid, NULL, 0) == -1){
 		 DBG_PRINT("failed waiting on reader_pid\n");
 		 exit(-1);
 	}
+	DBG_PRINT("exit_monitor() return\n");
 }
 
 int main(void) {
 	int ret;
 	int quit = FALSE;
 	char input_buffer[INPUT_BUFFER_SIZE];
-
 	/* pipe for reder's stdin */
 	if (pipe(reader_pipe_fd) == -1) {
 		DBG_PRINT("Error while creating the pipe\n");
@@ -81,6 +83,8 @@ int main(void) {
 		exit(-1);
 	}
 
+	/* workaround for #19 */
+	sleep(1);
 
 	reader_pid = run_proccess((char*)READER_PATH, reader_pipe_fd);
 	if(reader_pid == -1) {
@@ -88,6 +92,7 @@ int main(void) {
 		exit(-1);
 	}
 
+	DBG_PRINTF("writer_pid=%d, reader_pid=%d\n", writer_pid, reader_pid);
 
 	while (!quit) {
 		ret = read_command_from_fd(STDIN_FILENO, input_buffer, INPUT_BUFFER_SIZE);

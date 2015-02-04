@@ -101,6 +101,7 @@ int run_and_wait_for_threads(int thread_count) {
 	
 	/* wait for threads */
 	for (i = 0; i < thread_count; i++) {
+		DBG_PRINTF("joining thread %d\n",i);
 		error = pthread_join(threads[i], NULL);
 		if (error != 0) {
 			printf("Error %d: Thread %d could not be suspended\n", error, i);
@@ -126,6 +127,7 @@ int main() {
 	/* signals struct declarations */
 	struct sigaction new_action; 
 	
+	DBG_PRINT("main()\n");	
 	/* --- register SIGNAL handlers --- */
 	
 	/* register SIGUSR1 handler */
