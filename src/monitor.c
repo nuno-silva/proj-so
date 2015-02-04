@@ -83,7 +83,7 @@ int main(void) {
 		exit(-1);
 	}
 
-	/* workaround for #19 */
+	/* workaround for #19; see #20 too */
 	sleep(1);
 
 	reader_pid = run_proccess((char*)READER_PATH, reader_pipe_fd);
