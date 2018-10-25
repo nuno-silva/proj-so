@@ -29,7 +29,7 @@
     #define LINE_FEED		"\n"
     #define LINE_FEED_LEN	(1)
     
-    int run_proccess(char* prog_path, int* stdin_pipe_fd);
+    int run_process(char* prog_path, int* stdin_pipe_fd);
     
     void exit_monitor();
     

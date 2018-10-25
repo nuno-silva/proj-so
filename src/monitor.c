@@ -28,7 +28,7 @@ static int writer_pid = 0;
 static int reader_pid = 0;
 static int reader_pipe_fd[2];
 
-int run_proccess(char* prog_path, int* stdin_pipe_fd) {
+int run_process(char* prog_path, int* stdin_pipe_fd) {
 	int res;
 	res = fork();
 
@@ -93,7 +93,7 @@ int main(void) {
 		DBG_PRINT("Error while creating the pipe\n");
 	}
 
-	writer_pid = run_proccess((char*)WRITER_PATH, NULL );
+	writer_pid = run_process((char*)WRITER_PATH, NULL );
 	if(writer_pid == -1) {
 		printf("Could not start writer.\n");
 		exit(-1);
@@ -102,7 +102,7 @@ int main(void) {
 	/* workaround for #19; see #20 too */
 	sleep(1);
 
-	reader_pid = run_proccess((char*)READER_PATH, reader_pipe_fd);
+	reader_pid = run_process((char*)READER_PATH, reader_pipe_fd);
 	if(reader_pid == -1) {
 		printf("Could not start reader.\n");
 		exit(-1);
